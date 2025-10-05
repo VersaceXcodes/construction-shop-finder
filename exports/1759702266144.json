@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702266144,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_MobileBottomNav",
+      "version": "latest"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_MobileBottomNav.tsx",
+      "type": "text",
+      "size": 8776,
+      "dependencies": false
+    }
+  ]
+}

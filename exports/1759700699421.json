@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759700699421,
+  "operation": {
+    "id": "backend:specifications:openapi"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/openapi.yaml",
+      "type": "text",
+      "size": 112348,
+      "dependencies": false
+    }
+  ]
+}

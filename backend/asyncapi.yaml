@@ -1,0 +1,1213 @@
+asyncapi: 2.0.0
+info:
+  title: ConstructHub Realtime API
+  version: 1.0.0
+  description: Realtime WebSocket API for ConstructHub construction materials platform
+servers:
+  development:
+    url: http://localhost:3000
+    protocol: ws
+    description: Development WebSocket server
+channels:
+  /prices/updates:
+    description: Real-time price updates across all shops and products
+    subscribe:
+      operationId: subscribeToPrice Updates
+      message:
+        $ref: "#/components/messages/PriceUpdate"
+    publish:
+      operationId: publishPriceUpdate
+      message:
+        $ref: "#/components/messages/PriceUpdate"
+  /inventory/updates:
+    description: Real-time inventory and stock level changes
+    subscribe:
+      operationId: subscribeToInventoryUpdates
+      message:
+        $ref: "#/components/messages/InventoryUpdate"
+    publish:
+      operationId: publishInventoryUpdate
+      message:
+        $ref: "#/components/messages/InventoryUpdate"
+  /rfq/{rfq_id}/messages:
+    description: Real-time chat messages within RFQ threads
+    parameters:
+      rfq_id:
+        $ref: "#/components/parameters/RfqId"
+    subscribe:
+      operationId: subscribeToRfqMessages
+      message:
+        $ref: "#/components/messages/RfqMessage"
+    publish:
+      operationId: sendRfqMessage
+      message:
+        $ref: "#/components/messages/RfqMessage"
+  /rfq/{rfq_id}/status:
+    description: RFQ status and metadata updates
+    parameters:
+      rfq_id:
+        $ref: "#/components/parameters/RfqId"
+    subscribe:
+      operationId: subscribeToRfqStatus
+      message:
+        $ref: "#/components/messages/RfqStatusUpdate"
+    publish:
+      operationId: updateRfqStatus
+      message:
+        $ref: "#/components/messages/RfqStatusUpdate"
+  /rfq/{rfq_id}/typing:
+    description: User typing indicators in RFQ chats
+    parameters:
+      rfq_id:
+        $ref: "#/components/parameters/RfqId"
+    subscribe:
+      operationId: subscribeToRfqTyping
+      message:
+        $ref: "#/components/messages/TypingIndicator"
+    publish:
+      operationId: sendTypingIndicator
+      message:
+        $ref: "#/components/messages/TypingIndicator"
+  /rfq/quotes/new:
+    description: New quote responses to RFQs
+    subscribe:
+      operationId: subscribeToNewQuotes
+      message:
+        $ref: "#/components/messages/NewQuoteResponse"
+    publish:
+      operationId: publishNewQuote
+      message:
+        $ref: "#/components/messages/NewQuoteResponse"
+  /bom/{bom_id}/updates:
+    description: Real-time BOM changes and collaboration
+    parameters:
+      bom_id:
+        $ref: "#/components/parameters/BomId"
+    subscribe:
+      operationId: subscribeToBomUpdates
+      message:
+        $ref: "#/components/messages/BomUpdate"
+    publish:
+      operationId: updateBom
+      message:
+        $ref: "#/components/messages/BomUpdate"
+  /bom/{bom_id}/collaboration:
+    description: Real-time BOM collaboration events
+    parameters:
+      bom_id:
+        $ref: "#/components/parameters/BomId"
+    subscribe:
+      operationId: subscribeToBomCollaboration
+      message:
+        $ref: "#/components/messages/BomCollaborationEvent"
+    publish:
+      operationId: publishBomCollaboration
+      message:
+        $ref: "#/components/messages/BomCollaborationEvent"
+  /users/{user_id}/notifications:
+    description: Personal notification stream
+    parameters:
+      user_id:
+        $ref: "#/components/parameters/UserId"
+    subscribe:
+      operationId: subscribeToUserNotifications
+      message:
+        $ref: "#/components/messages/UserNotification"
+    publish:
+      operationId: sendUserNotification
+      message:
+        $ref: "#/components/messages/UserNotification"
+  /shops/{shop_id}/status:
+    description: Shop online status and activity updates
+    parameters:
+      shop_id:
+        $ref: "#/components/parameters/ShopId"
+    subscribe:
+      operationId: subscribeToShopStatus
+      message:
+        $ref: "#/components/messages/ShopStatusUpdate"
+    publish:
+      operationId: updateShopStatus
+      message:
+        $ref: "#/components/messages/ShopStatusUpdate"
+  /search/live:
+    description: Live search results and product updates
+    subscribe:
+      operationId: subscribeToLiveSearch
+      message:
+        $ref: "#/components/messages/LiveSearchUpdate"
+    publish:
+      operationId: publishSearchUpdate
+      message:
+        $ref: "#/components/messages/LiveSearchUpdate"
+  /comparison/live:
+    description: Live comparison table updates
+    subscribe:
+      operationId: subscribeToComparisonUpdates
+      message:
+        $ref: "#/components/messages/ComparisonUpdate"
+    publish:
+      operationId: publishComparisonUpdate
+      message:
+        $ref: "#/components/messages/ComparisonUpdate"
+  /user/presence:
+    description: User online presence and activity status
+    subscribe:
+      operationId: subscribeToUserPresence
+      message:
+        $ref: "#/components/messages/UserPresenceUpdate"
+    publish:
+      operationId: updateUserPresence
+      message:
+        $ref: "#/components/messages/UserPresenceUpdate"
+  /alerts/triggered:
+    description: Triggered price and stock alerts
+    subscribe:
+      operationId: subscribeToTriggeredAlerts
+      message:
+        $ref: "#/components/messages/AlertTriggered"
+    publish:
+      operationId: triggerAlert
+      message:
+        $ref: "#/components/messages/AlertTriggered"
+  /analytics/events:
+    description: Real-time analytics and tracking events
+    subscribe:
+      operationId: subscribeToAnalyticsEvents
+      message:
+        $ref: "#/components/messages/AnalyticsEvent"
+    publish:
+      operationId: trackAnalyticsEvent
+      message:
+        $ref: "#/components/messages/AnalyticsEvent"
+  /location/nearby:
+    description: Nearby shops and location-based updates
+    subscribe:
+      operationId: subscribeToLocationUpdates
+      message:
+        $ref: "#/components/messages/LocationUpdate"
+    publish:
+      operationId: updateLocation
+      message:
+        $ref: "#/components/messages/LocationUpdate"
+  /system/announcements:
+    description: System-wide announcements and maintenance notices
+    subscribe:
+      operationId: subscribeToSystemAnnouncements
+      message:
+        $ref: "#/components/messages/SystemAnnouncement"
+    publish:
+      operationId: publishSystemAnnouncement
+      message:
+        $ref: "#/components/messages/SystemAnnouncement"
+components:
+  parameters:
+    UserId:
+      schema:
+        type: string
+        description: Unique user identifier
+    ShopId:
+      schema:
+        type: string
+        description: Unique shop identifier
+    RfqId:
+      schema:
+        type: string
+        description: Unique RFQ identifier
+    BomId:
+      schema:
+        type: string
+        description: Unique BOM identifier
+  messages:
+    PriceUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - price_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - price_created
+              - price_updated
+              - price_deleted
+              - bulk_price_update
+          price_data:
+            type: object
+            required:
+              - id
+              - shop_id
+              - variant_id
+              - price
+              - currency
+              - price_per_base_unit
+            properties:
+              id:
+                type: string
+              shop_id:
+                type: string
+              variant_id:
+                type: string
+              price:
+                type: number
+              currency:
+                type: string
+              price_per_base_unit:
+                type: number
+              bulk_pricing_tiers:
+                type: array
+                items:
+                  type: object
+              promotional_price:
+                type: number
+                nullable: true
+              promotion_start_date:
+                type: number
+                nullable: true
+              promotion_end_date:
+                type: number
+                nullable: true
+              source:
+                type: string
+              verified:
+                type: boolean
+              verifications_count:
+                type: number
+              last_verified_at:
+                type: number
+                nullable: true
+              updated_at:
+                type: number
+          previous_price:
+            type: number
+            nullable: true
+          price_change_percentage:
+            type: number
+            nullable: true
+          affected_comparisons:
+            type: array
+            items:
+              type: string
+          timestamp:
+            type: number
+    InventoryUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - inventory_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - stock_updated
+              - stock_alert
+              - back_in_stock
+              - low_stock_warning
+          inventory_data:
+            type: object
+            required:
+              - shop_id
+              - variant_id
+              - in_stock
+              - lead_time_days
+              - minimum_order_quantity
+            properties:
+              shop_id:
+                type: string
+              variant_id:
+                type: string
+              in_stock:
+                type: boolean
+              stock_quantity:
+                type: number
+                nullable: true
+              low_stock_threshold:
+                type: number
+                nullable: true
+              lead_time_days:
+                type: number
+              minimum_order_quantity:
+                type: number
+              maximum_order_quantity:
+                type: number
+                nullable: true
+              updated_at:
+                type: number
+          previous_stock_quantity:
+            type: number
+            nullable: true
+          stock_change:
+            type: number
+            nullable: true
+          alert_triggered:
+            type: boolean
+          affected_searches:
+            type: array
+            items:
+              type: string
+          timestamp:
+            type: number
+    RfqMessage:
+      payload:
+        type: object
+        required:
+          - message_data
+          - sender_info
+          - timestamp
+        properties:
+          message_data:
+            type: object
+            required:
+              - id
+              - rfq_id
+              - sender_id
+              - message
+              - message_type
+            properties:
+              id:
+                type: string
+              rfq_id:
+                type: string
+              sender_id:
+                type: string
+              message:
+                type: string
+              message_type:
+                type: string
+              attachments:
+                type: array
+                items:
+                  type: object
+                nullable: true
+              read_at:
+                type: number
+                nullable: true
+              created_at:
+                type: number
+          sender_info:
+            type: object
+            required:
+              - user_id
+              - name
+              - user_type
+            properties:
+              user_id:
+                type: string
+              name:
+                type: string
+              user_type:
+                type: string
+              shop_name:
+                type: string
+                nullable: true
+          is_edited:
+            type: boolean
+          reply_to_message_id:
+            type: string
+            nullable: true
+          timestamp:
+            type: number
+    RfqStatusUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - rfq_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - status_changed
+              - deadline_updated
+              - budget_updated
+              - responses_updated
+          rfq_data:
+            type: object
+            required:
+              - id
+              - user_id
+              - bom_id
+              - title
+              - status
+              - priority
+            properties:
+              id:
+                type: string
+              user_id:
+                type: string
+              bom_id:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+                nullable: true
+              status:
+                type: string
+              priority:
+                type: string
+              deadline:
+                type: number
+                nullable: true
+              delivery_location_lat:
+                type: number
+                nullable: true
+              delivery_location_lng:
+                type: number
+                nullable: true
+              delivery_address:
+                type: string
+                nullable: true
+              special_requirements:
+                type: string
+                nullable: true
+              budget_limit:
+                type: number
+                nullable: true
+              responses_count:
+                type: number
+              updated_at:
+                type: number
+          previous_status:
+            type: string
+            nullable: true
+          status_changed_by:
+            type: string
+            nullable: true
+          notification_sent:
+            type: boolean
+          timestamp:
+            type: number
+    TypingIndicator:
+      payload:
+        type: object
+        required:
+          - rfq_id
+          - user_id
+          - is_typing
+          - timestamp
+        properties:
+          rfq_id:
+            type: string
+          user_id:
+            type: string
+          user_name:
+            type: string
+          is_typing:
+            type: boolean
+          timestamp:
+            type: number
+    NewQuoteResponse:
+      payload:
+        type: object
+        required:
+          - event_type
+          - quote_data
+          - rfq_info
+          - shop_info
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - quote_submitted
+              - quote_updated
+              - quote_withdrawn
+          quote_data:
+            type: object
+            required:
+              - id
+              - rfq_id
+              - shop_id
+              - total_price
+              - delivery_fee
+              - delivery_days
+              - status
+            properties:
+              id:
+                type: string
+              rfq_id:
+                type: string
+              shop_id:
+                type: string
+              total_price:
+                type: number
+              delivery_fee:
+                type: number
+              delivery_days:
+                type: number
+              notes:
+                type: string
+                nullable: true
+              terms_conditions:
+                type: string
+                nullable: true
+              valid_until:
+                type: number
+                nullable: true
+              status:
+                type: string
+              line_items:
+                type: array
+                items:
+                  type: object
+              created_at:
+                type: number
+              updated_at:
+                type: number
+          rfq_info:
+            type: object
+            required:
+              - id
+              - title
+              - user_id
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              user_id:
+                type: string
+              priority:
+                type: string
+              deadline:
+                type: number
+                nullable: true
+          shop_info:
+            type: object
+            required:
+              - id
+              - name
+              - location_lat
+              - location_lng
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              location_lat:
+                type: number
+              location_lng:
+                type: number
+              rating_average:
+                type: number
+              verified:
+                type: boolean
+          timestamp:
+            type: number
+    BomUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - bom_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - bom_created
+              - bom_updated
+              - bom_deleted
+              - item_added
+              - item_updated
+              - item_removed
+              - cost_recalculated
+          bom_data:
+            type: object
+            required:
+              - id
+              - user_id
+              - title
+              - total_cost
+              - item_count
+              - status
+            properties:
+              id:
+                type: string
+              user_id:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+                nullable: true
+              project_type:
+                type: string
+                nullable: true
+              template:
+                type: string
+                nullable: true
+              total_cost:
+                type: number
+              item_count:
+                type: number
+              status:
+                type: string
+              shared_token:
+                type: string
+                nullable: true
+              is_public:
+                type: boolean
+              duplicate_source_id:
+                type: string
+                nullable: true
+              updated_at:
+                type: number
+          changed_items:
+            type: array
+            items:
+              type: object
+              properties:
+                item_id:
+                  type: string
+                variant_id:
+                  type: string
+                quantity:
+                  type: number
+                operation:
+                  type: string
+                  enum:
+                    - added
+                    - updated
+                    - removed
+          cost_breakdown:
+            type: object
+            properties:
+              total_cost:
+                type: number
+              item_count:
+                type: number
+              cheapest_shop_cost:
+                type: number
+              optimization_savings:
+                type: number
+          changed_by:
+            type: string
+          timestamp:
+            type: number
+    BomCollaborationEvent:
+      payload:
+        type: object
+        required:
+          - event_type
+          - bom_id
+          - user_info
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - user_joined
+              - user_left
+              - cursor_moved
+              - selection_changed
+              - comment_added
+          bom_id:
+            type: string
+          user_info:
+            type: object
+            required:
+              - user_id
+              - name
+            properties:
+              user_id:
+                type: string
+              name:
+                type: string
+              user_type:
+                type: string
+              cursor_position:
+                type: object
+                nullable: true
+              selection:
+                type: object
+                nullable: true
+          collaboration_data:
+            type: object
+            nullable: true
+          timestamp:
+            type: number
+    UserNotification:
+      payload:
+        type: object
+        required:
+          - notification_data
+          - timestamp
+        properties:
+          notification_data:
+            type: object
+            required:
+              - id
+              - user_id
+              - type
+              - title
+              - message
+              - priority
+            properties:
+              id:
+                type: string
+              user_id:
+                type: string
+              type:
+                type: string
+              title:
+                type: string
+              message:
+                type: string
+              data:
+                type: object
+                nullable: true
+              read_at:
+                type: number
+                nullable: true
+              action_url:
+                type: string
+                nullable: true
+              priority:
+                type: string
+              created_at:
+                type: number
+          delivery_method:
+            type: string
+            enum:
+              - push
+              - email
+              - sms
+              - in_app
+          is_realtime:
+            type: boolean
+          timestamp:
+            type: number
+    ShopStatusUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - shop_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - shop_online
+              - shop_offline
+              - response_time_updated
+              - verification_status_changed
+          shop_data:
+            type: object
+            required:
+              - id
+              - name
+              - verified
+              - rating_average
+              - response_time_hours
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              verified:
+                type: boolean
+              rating_average:
+                type: number
+              rating_count:
+                type: number
+              response_time_hours:
+                type: number
+                nullable: true
+              stock_accuracy_score:
+                type: number
+              last_activity:
+                type: number
+                nullable: true
+              is_online:
+                type: boolean
+          status_change_reason:
+            type: string
+            nullable: true
+          timestamp:
+            type: number
+    LiveSearchUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - search_context
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - new_product_available
+              - product_discontinued
+              - search_trending
+              - category_updated
+          search_context:
+            type: object
+            required:
+              - search_query
+              - category
+            properties:
+              search_query:
+                type: string
+                nullable: true
+              category:
+                type: string
+                nullable: true
+              filters:
+                type: object
+                nullable: true
+              location:
+                type: object
+                nullable: true
+              results_count:
+                type: number
+          updated_products:
+            type: array
+            items:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                variant_id:
+                  type: string
+                update_type:
+                  type: string
+                new_data:
+                  type: object
+          trending_data:
+            type: object
+            nullable: true
+          timestamp:
+            type: number
+    ComparisonUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - comparison_context
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - price_changed
+              - stock_changed
+              - shop_added
+              - shop_removed
+              - optimization_updated
+          comparison_context:
+            type: object
+            required:
+              - product_ids
+              - shop_ids
+              - quantity
+            properties:
+              product_ids:
+                type: array
+                items:
+                  type: string
+              shop_ids:
+                type: array
+                items:
+                  type: string
+              quantity:
+                type: number
+              comparison_id:
+                type: string
+                nullable: true
+          updated_data:
+            type: object
+            properties:
+              affected_items:
+                type: array
+                items:
+                  type: object
+              new_best_price:
+                type: number
+                nullable: true
+              optimization_suggestions:
+                type: array
+                items:
+                  type: object
+              total_savings:
+                type: number
+                nullable: true
+          timestamp:
+            type: number
+    UserPresenceUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - user_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - user_online
+              - user_offline
+              - activity_updated
+              - location_updated
+          user_data:
+            type: object
+            required:
+              - user_id
+              - is_online
+            properties:
+              user_id:
+                type: string
+              name:
+                type: string
+              user_type:
+                type: string
+              is_online:
+                type: boolean
+              last_activity:
+                type: number
+                nullable: true
+              current_page:
+                type: string
+                nullable: true
+              location:
+                type: object
+                nullable: true
+          activity_context:
+            type: object
+            nullable: true
+          timestamp:
+            type: number
+    AlertTriggered:
+      payload:
+        type: object
+        required:
+          - event_type
+          - alert_data
+          - trigger_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - price_alert_triggered
+              - stock_alert_triggered
+              - custom_alert_triggered
+          alert_data:
+            type: object
+            required:
+              - id
+              - user_id
+              - type
+              - threshold_value
+              - condition_type
+              - active
+            properties:
+              id:
+                type: string
+              user_id:
+                type: string
+              type:
+                type: string
+              variant_id:
+                type: string
+                nullable: true
+              shop_id:
+                type: string
+                nullable: true
+              threshold_value:
+                type: number
+                nullable: true
+              condition_type:
+                type: string
+              notification_methods:
+                type: array
+                items:
+                  type: string
+              active:
+                type: boolean
+              triggered_count:
+                type: number
+              last_triggered_at:
+                type: number
+                nullable: true
+          trigger_data:
+            type: object
+            required:
+              - current_value
+              - previous_value
+            properties:
+              current_value:
+                type: number
+              previous_value:
+                type: number
+                nullable: true
+              percentage_change:
+                type: number
+                nullable: true
+              trigger_reason:
+                type: string
+              product_info:
+                type: object
+                nullable: true
+              shop_info:
+                type: object
+                nullable: true
+          timestamp:
+            type: number
+    AnalyticsEvent:
+      payload:
+        type: object
+        required:
+          - event_data
+          - timestamp
+        properties:
+          event_data:
+            type: object
+            required:
+              - id
+              - event_type
+            properties:
+              id:
+                type: string
+              user_id:
+                type: string
+                nullable: true
+              session_id:
+                type: string
+                nullable: true
+              event_type:
+                type: string
+              event_data:
+                type: object
+                nullable: true
+              page_url:
+                type: string
+                nullable: true
+              user_agent:
+                type: string
+                nullable: true
+              ip_address:
+                type: string
+                nullable: true
+              created_at:
+                type: number
+          context:
+            type: object
+            nullable: true
+          timestamp:
+            type: number
+    LocationUpdate:
+      payload:
+        type: object
+        required:
+          - event_type
+          - location_data
+          - timestamp
+        properties:
+          event_type:
+            type: string
+            enum:
+              - location_changed
+              - nearby_shops_updated
+              - geofence_entered
+              - geofence_exited
+          location_data:
+            type: object
+            required:
+              - user_id
+              - latitude
+              - longitude
+            properties:
+              user_id:
+                type: string
+              latitude:
+                type: number
+              longitude:
+                type: number
+              accuracy:
+                type: number
+                nullable: true
+              address:
+                type: string
+                nullable: true
+              previous_location:
+                type: object
+                nullable: true
+          nearby_shops:
+            type: array
+            items:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                shop_name:
+                  type: string
+                distance:
+                  type: number
+                is_open:
+                  type: boolean
+          geofence_data:
+            type: object
+            nullable: true
+          timestamp:
+            type: number
+    SystemAnnouncement:
+      payload:
+        type: object
+        required:
+          - announcement_type
+          - message
+          - timestamp
+        properties:
+          announcement_type:
+            type: string
+            enum:
+              - maintenance_scheduled
+              - system_update
+              - feature_release
+              - emergency_notice
+          message:
+            type: object
+            required:
+              - title
+              - content
+              - priority
+            properties:
+              title:
+                type: string
+              content:
+                type: string
+              priority:
+                type: string
+                enum:
+                  - low
+                  - normal
+                  - high
+                  - critical
+              action_required:
+                type: boolean
+              action_url:
+                type: string
+                nullable: true
+              expires_at:
+                type: number
+                nullable: true
+          target_users:
+            type: array
+            items:
+              type: string
+            nullable: true
+          target_user_types:
+            type: array
+            items:
+              type: string
+            nullable: true
+          timestamp:
+            type: number

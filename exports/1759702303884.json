@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702303884,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_UserLogin",
+      "version": "1759702198944"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_UserLogin.tsx",
+      "type": "text",
+      "size": 26427,
+      "dependencies": false
+    }
+  ]
+}

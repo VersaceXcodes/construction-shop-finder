@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702374604,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_RFQInbox",
+      "version": "1759702199795"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_RFQInbox.tsx",
+      "type": "text",
+      "size": 46155,
+      "dependencies": false
+    }
+  ]
+}

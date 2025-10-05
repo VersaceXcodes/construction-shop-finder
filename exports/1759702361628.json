@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702361628,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_UserProfileMenu",
+      "version": "1759702201827"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_UserProfileMenu.tsx",
+      "type": "text",
+      "size": 11729,
+      "dependencies": false
+    }
+  ]
+}

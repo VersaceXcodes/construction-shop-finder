@@ -1,0 +1,4236 @@
+openapi: 3.0.0
+info:
+  title: ConstructHub API
+  description: Construction material procurement, price comparison, and project
+    management platform
+  version: 1.0.0
+  contact:
+    name: ConstructHub API Support
+    email: api@constructhub.com
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+security:
+  - BearerAuth: []
+paths:
+  /auth/register:
+    post:
+      operationId: registerUser
+      summary: Register new user account
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - user_type
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                name:
+                  type: string
+                user_type:
+                  type: string
+                  enum:
+                    - buyer
+                    - seller
+                phone:
+                  type: string
+                  nullable: true
+                location_lat:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                  nullable: true
+                location_lng:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                  nullable: true
+                address:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  token:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /auth/login:
+    post:
+      operationId: loginUser
+      summary: User login authentication
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  token:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /auth/logout:
+    post:
+      operationId: logoutUser
+      summary: User logout
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: Logout successful
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get current user profile
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      summary: Request password reset
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Password reset email sent
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /auth/reset-password:
+    post:
+      operationId: resetPassword
+      summary: Reset password with token
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - password
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        "200":
+          description: Password reset successful
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /users:
+    get:
+      operationId: searchUsers
+      summary: Search and list users
+      tags:
+        - Users
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: user_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - buyer
+              - seller
+        - name: is_verified
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - email
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+  /users/{user_id}:
+    get:
+      operationId: getUserById
+      summary: Get user by ID
+      tags:
+        - Users
+      security: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateUser
+      summary: Update user profile
+      tags:
+        - Users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                  nullable: true
+                location_lat:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                  nullable: true
+                location_lng:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                  nullable: true
+                address:
+                  type: string
+                  nullable: true
+                preferences:
+                  type: object
+                  nullable: true
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /shops:
+    get:
+      operationId: searchShops
+      summary: Search and list shops with filtering
+      tags:
+        - Shops
+      security: []
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: shop_type
+          in: query
+          schema:
+            type: string
+        - name: verified
+          in: query
+          schema:
+            type: boolean
+        - name: delivery_available
+          in: query
+          schema:
+            type: boolean
+        - name: location_lat
+          in: query
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: location_lng
+          in: query
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: min_rating
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 5
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - name
+              - rating_average
+              - created_at
+              - distance
+            default: rating_average
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: List of shops
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shops:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Shop"
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+    post:
+      operationId: createShop
+      summary: Create new shop
+      tags:
+        - Shops
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - location_lat
+                - location_lng
+                - address
+              properties:
+                name:
+                  type: string
+                phones:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                location_lat:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                location_lng:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                address:
+                  type: string
+                hours:
+                  type: object
+                  nullable: true
+                business_license:
+                  type: string
+                  nullable: true
+                shop_type:
+                  type: string
+                  nullable: true
+                delivery_available:
+                  type: boolean
+                  default: false
+                delivery_radius:
+                  type: number
+                  nullable: true
+                delivery_fee_base:
+                  type: number
+                  nullable: true
+                delivery_fee_per_km:
+                  type: number
+                  nullable: true
+                minimum_order:
+                  type: number
+                  nullable: true
+                cash_discount_percentage:
+                  type: number
+                  nullable: true
+      responses:
+        "201":
+          description: Shop created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /shops/{shop_id}:
+    get:
+      operationId: getShopById
+      summary: Get shop details by ID
+      tags:
+        - Shops
+      security: []
+      parameters:
+        - name: shop_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Shop details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateShop
+      summary: Update shop information
+      tags:
+        - Shops
+      parameters:
+        - name: shop_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phones:
+                  type: array
+                  items:
+                    type: string
+                location_lat:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                location_lng:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                address:
+                  type: string
+                hours:
+                  type: object
+                  nullable: true
+                business_license:
+                  type: string
+                  nullable: true
+                shop_type:
+                  type: string
+                  nullable: true
+                delivery_available:
+                  type: boolean
+                delivery_radius:
+                  type: number
+                  nullable: true
+                delivery_fee_base:
+                  type: number
+                  nullable: true
+                delivery_fee_per_km:
+                  type: number
+                  nullable: true
+                minimum_order:
+                  type: number
+                  nullable: true
+                cash_discount_percentage:
+                  type: number
+                  nullable: true
+                verified:
+                  type: boolean
+      responses:
+        "200":
+          description: Shop updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Shop"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /shops/near-me:
+    get:
+      operationId: getNearbyShops
+      summary: Find shops near current location
+      tags:
+        - Shops
+      security: []
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 5
+        - name: shop_type
+          in: query
+          schema:
+            type: string
+        - name: product_search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Nearby shops with distances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shops:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Shop"
+                        - type: object
+                          properties:
+                            distance_km:
+                              type: number
+                            top_prices:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  variant_id:
+                                    type: string
+                                  product_name:
+                                    type: string
+                                  price:
+                                    type: number
+                                  in_stock:
+                                    type: boolean
+  /categories:
+    get:
+      operationId: getCategories
+      summary: Get product categories with hierarchy
+      tags:
+        - Categories
+      security: []
+      parameters:
+        - name: parent_id
+          in: query
+          schema:
+            type: string
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+            default: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - name
+              - sort_order
+              - created_at
+            default: sort_order
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Category"
+                  total:
+                    type: integer
+    post:
+      operationId: createCategory
+      summary: Create new product category
+      tags:
+        - Categories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - category_path
+              properties:
+                name:
+                  type: string
+                parent_id:
+                  type: string
+                  nullable: true
+                category_path:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                image_url:
+                  type: string
+                  nullable: true
+                sort_order:
+                  type: integer
+                  default: 0
+      responses:
+        "201":
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+  /categories/{category_id}:
+    get:
+      operationId: getCategoryById
+      summary: Get category by ID
+      tags:
+        - Categories
+      security: []
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /products:
+    get:
+      operationId: searchProducts
+      summary: Search products with advanced filtering
+      tags:
+        - Products
+      security: []
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: category_id
+          in: query
+          schema:
+            type: string
+        - name: subcategory
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+            default: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - canonical_name
+              - created_at
+              - category_id
+            default: canonical_name
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+    post:
+      operationId: createProduct
+      summary: Create new product
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - canonical_name
+                - category_id
+                - base_unit
+              properties:
+                canonical_name:
+                  type: string
+                category_id:
+                  type: string
+                subcategory:
+                  type: string
+                  nullable: true
+                base_unit:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                specifications:
+                  type: object
+                  nullable: true
+                synonyms:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                image_url:
+                  type: string
+                  nullable: true
+                waste_factor_percentage:
+                  type: number
+                  default: 0
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /products/{product_id}:
+    get:
+      operationId: getProductById
+      summary: Get product details with variants and prices
+      tags:
+        - Products
+      security: []
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          schema:
+            type: number
+            default: 1
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: location_lat
+          in: query
+          schema:
+            type: number
+        - name: location_lng
+          in: query
+          schema:
+            type: number
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 10
+      responses:
+        "200":
+          description: Product details with variants and shop prices
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Product"
+                  - type: object
+                    properties:
+                      variants:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/ProductVariant"
+                            - type: object
+                              properties:
+                                prices:
+                                  type: array
+                                  items:
+                                    allOf:
+                                      - $ref: "#/components/schemas/Price"
+                                      - type: object
+                                        properties:
+                                          shop:
+                                            $ref: "#/components/schemas/Shop"
+                                          inventory:
+                                            $ref: "#/components/schemas/Inventory"
+                                          distance_km:
+                                            type: number
+                                            nullable: true
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /products/{product_id}/variants:
+    get:
+      operationId: getProductVariants
+      summary: Get variants for a specific product
+      tags:
+        - Products
+      security: []
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: grade
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Product variants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  variants:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductVariant"
+  /product-variants:
+    get:
+      operationId: searchProductVariants
+      summary: Search product variants
+      tags:
+        - Product Variants
+      security: []
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: product_id
+          in: query
+          schema:
+            type: string
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: grade
+          in: query
+          schema:
+            type: string
+        - name: is_active
+          in: query
+          schema:
+            type: boolean
+            default: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of product variants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  variants:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductVariant"
+                  total:
+                    type: integer
+    post:
+      operationId: createProductVariant
+      summary: Create new product variant
+      tags:
+        - Product Variants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - product_id
+              properties:
+                product_id:
+                  type: string
+                brand:
+                  type: string
+                  nullable: true
+                grade:
+                  type: string
+                  nullable: true
+                size:
+                  type: string
+                  nullable: true
+                pack_quantity:
+                  type: number
+                  nullable: true
+                pack_unit:
+                  type: string
+                  nullable: true
+                unit_to_base_factor:
+                  type: number
+                  default: 1
+                sku:
+                  type: string
+                  nullable: true
+                barcode:
+                  type: string
+                  nullable: true
+                image_url:
+                  type: string
+                  nullable: true
+                specifications:
+                  type: object
+                  nullable: true
+      responses:
+        "201":
+          description: Product variant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductVariant"
+  /product-variants/{variant_id}:
+    get:
+      operationId: getProductVariantById
+      summary: Get product variant by ID
+      tags:
+        - Product Variants
+      security: []
+      parameters:
+        - name: variant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product variant details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductVariant"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /prices:
+    get:
+      operationId: searchPrices
+      summary: Search and compare prices across shops
+      tags:
+        - Prices
+      security: []
+      parameters:
+        - name: variant_id
+          in: query
+          schema:
+            type: string
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: min_price
+          in: query
+          schema:
+            type: number
+        - name: max_price
+          in: query
+          schema:
+            type: number
+        - name: currency
+          in: query
+          schema:
+            type: string
+            default: AED
+        - name: verified
+          in: query
+          schema:
+            type: boolean
+        - name: has_promotion
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - price
+              - price_per_base_unit
+              - created_at
+              - verified
+            default: price
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+      responses:
+        "200":
+          description: List of prices with shop and product details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  prices:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Price"
+                        - type: object
+                          properties:
+                            shop:
+                              $ref: "#/components/schemas/Shop"
+                            variant:
+                              $ref: "#/components/schemas/ProductVariant"
+                            product:
+                              $ref: "#/components/schemas/Product"
+                            inventory:
+                              $ref: "#/components/schemas/Inventory"
+                  total:
+                    type: integer
+    post:
+      operationId: createPrice
+      summary: Create or update price listing
+      tags:
+        - Prices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - shop_id
+                - variant_id
+                - price
+                - price_per_base_unit
+              properties:
+                shop_id:
+                  type: string
+                variant_id:
+                  type: string
+                price:
+                  type: number
+                currency:
+                  type: string
+                  default: AED
+                price_per_base_unit:
+                  type: number
+                bulk_pricing_tiers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      min_qty:
+                        type: number
+                      price:
+                        type: number
+                  nullable: true
+                promotional_price:
+                  type: number
+                  nullable: true
+                promotion_start_date:
+                  type: number
+                  nullable: true
+                promotion_end_date:
+                  type: number
+                  nullable: true
+      responses:
+        "201":
+          description: Price created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Price"
+  /prices/compare:
+    get:
+      operationId: comparePrices
+      summary: Compare prices across multiple shops and products
+      tags:
+        - Prices
+      security: []
+      parameters:
+        - name: product_ids
+          in: query
+          schema:
+            type: string
+        - name: variant_ids
+          in: query
+          schema:
+            type: string
+        - name: shop_ids
+          in: query
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          schema:
+            type: number
+            default: 1
+        - name: include_delivery
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: waste_factor
+          in: query
+          schema:
+            type: number
+            default: 0
+        - name: location_lat
+          in: query
+          schema:
+            type: number
+        - name: location_lng
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Price comparison matrix
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comparison:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        variant:
+                          $ref: "#/components/schemas/ProductVariant"
+                        product:
+                          $ref: "#/components/schemas/Product"
+                        shop_prices:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              shop:
+                                $ref: "#/components/schemas/Shop"
+                              price:
+                                $ref: "#/components/schemas/Price"
+                              inventory:
+                                $ref: "#/components/schemas/Inventory"
+                              total_price:
+                                type: number
+                              delivery_fee:
+                                type: number
+                              distance_km:
+                                type: number
+                  optimization:
+                    type: object
+                    properties:
+                      cheapest_single_shop:
+                        type: object
+                        properties:
+                          shop_id:
+                            type: string
+                          total_cost:
+                            type: number
+                      optimized_multi_shop:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            shop_id:
+                              type: string
+                            items:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  variant_id:
+                                    type: string
+                                  quantity:
+                                    type: number
+                                  price:
+                                    type: number
+                            subtotal:
+                              type: number
+  /boms:
+    get:
+      operationId: getUserBoms
+      summary: Get user's bill of materials
+      tags:
+        - BOMs
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: project_type
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - draft
+              - active
+              - completed
+              - archived
+        - name: is_public
+          in: query
+          schema:
+            type: boolean
+        - name: template
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - title
+              - created_at
+              - updated_at
+              - total_cost
+            default: updated_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: List of user's BOMs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  boms:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BOM"
+                  total:
+                    type: integer
+    post:
+      operationId: createBom
+      summary: Create new BOM
+      tags:
+        - BOMs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                project_type:
+                  type: string
+                  nullable: true
+                template:
+                  type: string
+                  nullable: true
+                duplicate_source_id:
+                  type: string
+                  nullable: true
+                is_public:
+                  type: boolean
+                  default: false
+      responses:
+        "201":
+          description: BOM created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOM"
+  /boms/{bom_id}:
+    get:
+      operationId: getBomById
+      summary: Get BOM details with items
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: BOM details with items
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BOM"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/BOMItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateBom
+      summary: Update BOM details
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                project_type:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                  enum:
+                    - draft
+                    - active
+                    - completed
+                    - archived
+                is_public:
+                  type: boolean
+      responses:
+        "200":
+          description: BOM updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOM"
+    delete:
+      operationId: deleteBom
+      summary: Delete BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: BOM deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /boms/{bom_id}/items:
+    get:
+      operationId: getBomItems
+      summary: Get BOM items
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: BOM items with product and pricing details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/BOMItem"
+                        - type: object
+                          properties:
+                            variant:
+                              $ref: "#/components/schemas/ProductVariant"
+                            product:
+                              $ref: "#/components/schemas/Product"
+                            best_prices:
+                              type: array
+                              items:
+                                allOf:
+                                  - $ref: "#/components/schemas/Price"
+                                  - type: object
+                                    properties:
+                                      shop:
+                                        $ref: "#/components/schemas/Shop"
+    post:
+      operationId: addBomItem
+      summary: Add item to BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - variant_id
+                - quantity
+                - unit
+              properties:
+                variant_id:
+                  type: string
+                quantity:
+                  type: number
+                unit:
+                  type: string
+                waste_factor:
+                  type: number
+                  default: 0
+                notes:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Item added to BOM
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMItem"
+  /boms/{bom_id}/items/{item_id}:
+    put:
+      operationId: updateBomItem
+      summary: Update BOM item
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                unit:
+                  type: string
+                waste_factor:
+                  type: number
+                notes:
+                  type: string
+                  nullable: true
+                sort_order:
+                  type: integer
+      responses:
+        "200":
+          description: BOM item updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMItem"
+    delete:
+      operationId: removeBomItem
+      summary: Remove item from BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item removed from BOM
+  /boms/{bom_id}/duplicate:
+    post:
+      operationId: duplicateBom
+      summary: Create duplicate of existing BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: BOM duplicated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOM"
+  /boms/{bom_id}/cost-analysis:
+    get:
+      operationId: getBomCostAnalysis
+      summary: Get detailed cost analysis for BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: location_lat
+          in: query
+          schema:
+            type: number
+        - name: location_lng
+          in: query
+          schema:
+            type: number
+        - name: include_delivery
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Comprehensive cost analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_cost:
+                    type: number
+                  item_count:
+                    type: integer
+                  shop_breakdown:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        shop:
+                          $ref: "#/components/schemas/Shop"
+                        total_cost:
+                          type: number
+                        available_items:
+                          type: integer
+                        missing_items:
+                          type: integer
+                        delivery_fee:
+                          type: number
+                  optimization_suggestions:
+                    type: object
+                    properties:
+                      cheapest_single_shop:
+                        type: object
+                        properties:
+                          shop_id:
+                            type: string
+                          total_cost:
+                            type: number
+                          missing_items:
+                            type: array
+                            items:
+                              type: string
+                      multi_shop_optimal:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            shop_id:
+                              type: string
+                            items:
+                              type: array
+                              items:
+                                type: string
+                            cost:
+                              type: number
+                  missing_items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        item_id:
+                          type: string
+                        variant_id:
+                          type: string
+                        product_name:
+                          type: string
+                        alternatives:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/ProductVariant"
+  /boms/{bom_id}/share:
+    post:
+      operationId: shareBom
+      summary: Generate shareable link for BOM
+      tags:
+        - BOMs
+      parameters:
+        - name: bom_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_public:
+                  type: boolean
+                  default: true
+                expires_at:
+                  type: number
+                  nullable: true
+      responses:
+        "200":
+          description: Shareable link created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shared_token:
+                    type: string
+                  share_url:
+                    type: string
+                  expires_at:
+                    type: number
+                    nullable: true
+  /boms/shared/{token}:
+    get:
+      operationId: getSharedBom
+      summary: Access shared BOM via token
+      tags:
+        - BOMs
+      security: []
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Shared BOM details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BOM"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/BOMItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /rfqs:
+    get:
+      operationId: getUserRfqs
+      summary: Get user's RFQs with filtering
+      tags:
+        - RFQs
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - pending
+              - active
+              - closed
+              - cancelled
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum:
+              - low
+              - medium
+              - high
+              - urgent
+        - name: has_deadline
+          in: query
+          schema:
+            type: boolean
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+              - deadline
+              - priority
+              - budget_limit
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: List of user's RFQs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rfqs:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/RFQ"
+                        - type: object
+                          properties:
+                            bom:
+                              type: object
+                              properties:
+                                title:
+                                  type: string
+                                item_count:
+                                  type: integer
+                  total:
+                    type: integer
+    post:
+      operationId: createRfq
+      summary: Create new RFQ
+      tags:
+        - RFQs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bom_id
+                - title
+              properties:
+                bom_id:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                    - urgent
+                  default: medium
+                deadline:
+                  type: number
+                  nullable: true
+                delivery_location_lat:
+                  type: number
+                  nullable: true
+                delivery_location_lng:
+                  type: number
+                  nullable: true
+                delivery_address:
+                  type: string
+                  nullable: true
+                special_requirements:
+                  type: string
+                  nullable: true
+                budget_limit:
+                  type: number
+                  nullable: true
+      responses:
+        "201":
+          description: RFQ created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFQ"
+  /rfqs/{rfq_id}:
+    get:
+      operationId: getRfqById
+      summary: Get RFQ details with BOM and replies
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: RFQ details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/RFQ"
+                  - type: object
+                    properties:
+                      bom:
+                        allOf:
+                          - $ref: "#/components/schemas/BOM"
+                          - type: object
+                            properties:
+                              items:
+                                type: array
+                                items:
+                                  $ref: "#/components/schemas/BOMItem"
+                      replies:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/RFQReply"
+                            - type: object
+                              properties:
+                                shop:
+                                  $ref: "#/components/schemas/Shop"
+    put:
+      operationId: updateRfq
+      summary: Update RFQ details
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - active
+                    - closed
+                    - cancelled
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                    - urgent
+                deadline:
+                  type: number
+                  nullable: true
+                delivery_address:
+                  type: string
+                  nullable: true
+                special_requirements:
+                  type: string
+                  nullable: true
+                budget_limit:
+                  type: number
+                  nullable: true
+      responses:
+        "200":
+          description: RFQ updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFQ"
+  /rfqs/{rfq_id}/invite-shops:
+    post:
+      operationId: inviteShopsToRfq
+      summary: Invite shops to respond to RFQ
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - shop_ids
+              properties:
+                shop_ids:
+                  type: array
+                  items:
+                    type: string
+                message:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Invitations sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invited_count:
+                    type: integer
+                  shop_ids:
+                    type: array
+                    items:
+                      type: string
+  /rfqs/{rfq_id}/replies:
+    get:
+      operationId: getRfqReplies
+      summary: Get replies for RFQ
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - pending
+              - accepted
+              - rejected
+      responses:
+        "200":
+          description: RFQ replies with shop details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  replies:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/RFQReply"
+                        - type: object
+                          properties:
+                            shop:
+                              $ref: "#/components/schemas/Shop"
+    post:
+      operationId: createRfqReply
+      summary: Submit reply to RFQ (Shop owners)
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - total_price
+                - line_items
+              properties:
+                total_price:
+                  type: number
+                delivery_fee:
+                  type: number
+                  default: 0
+                delivery_days:
+                  type: number
+                  default: 0
+                notes:
+                  type: string
+                  nullable: true
+                terms_conditions:
+                  type: string
+                  nullable: true
+                valid_until:
+                  type: number
+                  nullable: true
+                line_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id:
+                        type: string
+                      quantity:
+                        type: number
+                      unit_price:
+                        type: number
+                      total_price:
+                        type: number
+                      notes:
+                        type: string
+                        nullable: true
+      responses:
+        "201":
+          description: RFQ reply submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFQReply"
+  /rfqs/{rfq_id}/replies/{reply_id}:
+    put:
+      operationId: updateRfqReply
+      summary: Update RFQ reply
+      tags:
+        - RFQs
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: reply_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - accepted
+                    - rejected
+                total_price:
+                  type: number
+                delivery_fee:
+                  type: number
+                delivery_days:
+                  type: number
+                notes:
+                  type: string
+                  nullable: true
+                terms_conditions:
+                  type: string
+                  nullable: true
+                valid_until:
+                  type: number
+                  nullable: true
+      responses:
+        "200":
+          description: RFQ reply updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RFQReply"
+  /rfqs/{rfq_id}/messages:
+    get:
+      operationId: getRfqMessages
+      summary: Get messages for RFQ
+      tags:
+        - Messages
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: RFQ messages with sender details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Message"
+                        - type: object
+                          properties:
+                            sender:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                                user_type:
+                                  type: string
+    post:
+      operationId: sendRfqMessage
+      summary: Send message in RFQ thread
+      tags:
+        - Messages
+      parameters:
+        - name: rfq_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                message_type:
+                  type: string
+                  enum:
+                    - text
+                    - image
+                    - document
+                  default: text
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      filename:
+                        type: string
+                      file_type:
+                        type: string
+                      file_size:
+                        type: integer
+                  nullable: true
+      responses:
+        "201":
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /messages/{message_id}/read:
+    put:
+      operationId: markMessageAsRead
+      summary: Mark message as read
+      tags:
+        - Messages
+      parameters:
+        - name: message_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Message marked as read
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /alerts:
+    get:
+      operationId: getUserAlerts
+      summary: Get user's price and stock alerts
+      tags:
+        - Alerts
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - price_drop
+              - stock_available
+              - new_product
+        - name: active
+          in: query
+          schema:
+            type: boolean
+        - name: variant_id
+          in: query
+          schema:
+            type: string
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of user's alerts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  alerts:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Alert"
+                        - type: object
+                          properties:
+                            variant:
+                              $ref: "#/components/schemas/ProductVariant"
+                            product:
+                              $ref: "#/components/schemas/Product"
+                            shop:
+                              $ref: "#/components/schemas/Shop"
+                  total:
+                    type: integer
+    post:
+      operationId: createAlert
+      summary: Create new price or stock alert
+      tags:
+        - Alerts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - condition_type
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - price_drop
+                    - stock_available
+                    - new_product
+                variant_id:
+                  type: string
+                  nullable: true
+                shop_id:
+                  type: string
+                  nullable: true
+                threshold_value:
+                  type: number
+                  nullable: true
+                condition_type:
+                  type: string
+                  enum:
+                    - below
+                    - above
+                    - equals
+                    - percentage_change
+                notification_methods:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - push
+                      - email
+                      - sms
+                  default:
+                    - push
+      responses:
+        "201":
+          description: Alert created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+  /alerts/{alert_id}:
+    get:
+      operationId: getAlertById
+      summary: Get alert details
+      tags:
+        - Alerts
+      parameters:
+        - name: alert_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Alert details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+    put:
+      operationId: updateAlert
+      summary: Update alert settings
+      tags:
+        - Alerts
+      parameters:
+        - name: alert_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                threshold_value:
+                  type: number
+                  nullable: true
+                condition_type:
+                  type: string
+                  enum:
+                    - below
+                    - above
+                    - equals
+                    - percentage_change
+                notification_methods:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - push
+                      - email
+                      - sms
+                active:
+                  type: boolean
+      responses:
+        "200":
+          description: Alert updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+    delete:
+      operationId: deleteAlert
+      summary: Delete alert
+      tags:
+        - Alerts
+      parameters:
+        - name: alert_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Alert deleted successfully
+  /notifications:
+    get:
+      operationId: getUserNotifications
+      summary: Get user notifications
+      tags:
+        - Notifications
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: is_read
+          in: query
+          schema:
+            type: boolean
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum:
+              - low
+              - normal
+              - high
+              - urgent
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+                  unread_count:
+                    type: integer
+                  total:
+                    type: integer
+  /notifications/{notification_id}/read:
+    put:
+      operationId: markNotificationAsRead
+      summary: Mark notification as read
+      tags:
+        - Notifications
+      parameters:
+        - name: notification_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notification marked as read
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /notifications/mark-all-read:
+    put:
+      operationId: markAllNotificationsAsRead
+      summary: Mark all notifications as read
+      tags:
+        - Notifications
+      responses:
+        "200":
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  marked_count:
+                    type: integer
+  /reviews:
+    get:
+      operationId: getReviews
+      summary: Get product and shop reviews
+      tags:
+        - Reviews
+      security: []
+      parameters:
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: variant_id
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: string
+        - name: min_rating
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+        - name: max_rating
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+        - name: verified_purchase
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum:
+              - created_at
+              - rating
+              - helpful_votes
+            default: created_at
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        "200":
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reviews:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Review"
+                        - type: object
+                          properties:
+                            user:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                user_type:
+                                  type: string
+                  total:
+                    type: integer
+                  rating_summary:
+                    type: object
+                    properties:
+                      average_rating:
+                        type: number
+                      total_reviews:
+                        type: integer
+                      rating_distribution:
+                        type: object
+                        properties:
+                          "1":
+                            type: integer
+                          "2":
+                            type: integer
+                          "3":
+                            type: integer
+                          "4":
+                            type: integer
+                          "5":
+                            type: integer
+    post:
+      operationId: createReview
+      summary: Create product or shop review
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                shop_id:
+                  type: string
+                  nullable: true
+                variant_id:
+                  type: string
+                  nullable: true
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                review_text:
+                  type: string
+                  nullable: true
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      caption:
+                        type: string
+                        nullable: true
+                  nullable: true
+                verified_purchase:
+                  type: boolean
+                  default: false
+      responses:
+        "201":
+          description: Review created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+  /reviews/{review_id}/vote:
+    post:
+      operationId: voteOnReview
+      summary: Vote on review helpfulness
+      tags:
+        - Reviews
+      parameters:
+        - name: review_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - helpful
+              properties:
+                helpful:
+                  type: boolean
+      responses:
+        "200":
+          description: Vote recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  helpful_votes:
+                    type: integer
+                  total_votes:
+                    type: integer
+  /favorites:
+    get:
+      operationId: getUserFavorites
+      summary: Get user's favorite items
+      tags:
+        - Favorites
+      parameters:
+        - name: favorite_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - shop
+              - variant
+              - bom
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of user's favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Favorite"
+                        - type: object
+                          properties:
+                            shop:
+                              $ref: "#/components/schemas/Shop"
+                            variant:
+                              $ref: "#/components/schemas/ProductVariant"
+                            product:
+                              $ref: "#/components/schemas/Product"
+                            bom:
+                              $ref: "#/components/schemas/BOM"
+                  total:
+                    type: integer
+    post:
+      operationId: addToFavorites
+      summary: Add item to favorites
+      tags:
+        - Favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - favorite_type
+              properties:
+                favorite_type:
+                  type: string
+                  enum:
+                    - shop
+                    - variant
+                    - bom
+                shop_id:
+                  type: string
+                  nullable: true
+                variant_id:
+                  type: string
+                  nullable: true
+                bom_id:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Item added to favorites
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorite"
+  /favorites/{favorite_id}:
+    delete:
+      operationId: removeFromFavorites
+      summary: Remove item from favorites
+      tags:
+        - Favorites
+      parameters:
+        - name: favorite_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Item removed from favorites
+  /search:
+    get:
+      operationId: universalSearch
+      summary: Universal search across products, shops, and categories
+      tags:
+        - Search
+      security: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - products
+              - shops
+              - categories
+              - all
+            default: all
+        - name: location_lat
+          in: query
+          schema:
+            type: number
+        - name: location_lng
+          in: query
+          schema:
+            type: number
+        - name: radius
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Universal search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Product"
+                      shops:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Shop"
+                      categories:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Category"
+                  total_count:
+                    type: integer
+                  suggestions:
+                    type: array
+                    items:
+                      type: string
+  /search/suggestions:
+    get:
+      operationId: getSearchSuggestions
+      summary: Get search autocomplete suggestions
+      tags:
+        - Search
+      security: []
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum:
+              - products
+              - shops
+              - categories
+            default: products
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Search suggestions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        type:
+                          type: string
+                        id:
+                          type: string
+                          nullable: true
+                        metadata:
+                          type: object
+                          nullable: true
+  /search/history:
+    get:
+      operationId: getSearchHistory
+      summary: Get user's search history
+      tags:
+        - Search
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: User's search history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  searches:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        query:
+                          type: string
+                        filters:
+                          type: object
+                        created_at:
+                          type: number
+                        results_count:
+                          type: integer
+    post:
+      operationId: saveSearchToHistory
+      summary: Save search query to history
+      tags:
+        - Search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                filters:
+                  type: object
+                  nullable: true
+                results_count:
+                  type: integer
+                  default: 0
+      responses:
+        "201":
+          description: Search saved to history
+  /map/shops:
+    get:
+      operationId: getShopsForMap
+      summary: Get shops with coordinates for map display
+      tags:
+        - Map
+      security: []
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: zoom
+          in: query
+          schema:
+            type: integer
+            default: 12
+        - name: shop_type
+          in: query
+          schema:
+            type: string
+        - name: product_search
+          in: query
+          schema:
+            type: string
+        - name: bounds
+          in: query
+          schema:
+            type: string
+          description: Map bounds as 'north,south,east,west'
+      responses:
+        "200":
+          description: Shops with location data for map
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shops:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        location_lat:
+                          type: number
+                        location_lng:
+                          type: number
+                        shop_type:
+                          type: string
+                        rating_average:
+                          type: number
+                        verified:
+                          type: boolean
+                        product_count:
+                          type: integer
+                  clusters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lng:
+                          type: number
+                        count:
+                          type: integer
+                        radius:
+                          type: number
+  /trip-planner:
+    post:
+      operationId: planOptimalTrip
+      summary: Plan optimal route for multi-shop visits
+      tags:
+        - Trip Planning
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bom_id:
+                  type: string
+                  nullable: true
+                shop_ids:
+                  type: array
+                  items:
+                    type: string
+                start_location:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                    lng:
+                      type: number
+                  nullable: true
+                return_to_start:
+                  type: boolean
+                  default: true
+      responses:
+        "200":
+          description: Optimized trip plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  route:
+                    type: object
+                    properties:
+                      total_distance_km:
+                        type: number
+                      estimated_duration_minutes:
+                        type: number
+                      stops:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            shop:
+                              $ref: "#/components/schemas/Shop"
+                            order:
+                              type: integer
+                            items_to_buy:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  variant_id:
+                                    type: string
+                                  product_name:
+                                    type: string
+                                  quantity:
+                                    type: number
+                                  estimated_cost:
+                                    type: number
+                            estimated_cash_needed:
+                              type: number
+                            estimated_time_minutes:
+                              type: integer
+                  summary:
+                    type: object
+                    properties:
+                      total_estimated_cost:
+                        type: number
+                      total_cash_needed:
+                        type: number
+                      total_items:
+                        type: integer
+                      potential_savings:
+                        type: number
+  /inventory:
+    get:
+      operationId: getShopInventory
+      summary: Get shop inventory with stock levels
+      tags:
+        - Inventory
+      parameters:
+        - name: shop_id
+          in: query
+          schema:
+            type: string
+        - name: variant_id
+          in: query
+          schema:
+            type: string
+        - name: in_stock
+          in: query
+          schema:
+            type: boolean
+        - name: low_stock_only
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Shop inventory with product details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inventory:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Inventory"
+                        - type: object
+                          properties:
+                            variant:
+                              $ref: "#/components/schemas/ProductVariant"
+                            product:
+                              $ref: "#/components/schemas/Product"
+                            price:
+                              $ref: "#/components/schemas/Price"
+                  total:
+                    type: integer
+    post:
+      operationId: addInventoryItem
+      summary: Add item to shop inventory
+      tags:
+        - Inventory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - shop_id
+                - variant_id
+              properties:
+                shop_id:
+                  type: string
+                variant_id:
+                  type: string
+                in_stock:
+                  type: boolean
+                  default: true
+                stock_quantity:
+                  type: number
+                  nullable: true
+                low_stock_threshold:
+                  type: number
+                  nullable: true
+                lead_time_days:
+                  type: integer
+                  default: 0
+                minimum_order_quantity:
+                  type: number
+                  default: 1
+                maximum_order_quantity:
+                  type: number
+                  nullable: true
+      responses:
+        "201":
+          description: Inventory item added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inventory"
+  /inventory/{shop_id}/{variant_id}:
+    put:
+      operationId: updateInventoryItem
+      summary: Update inventory item
+      tags:
+        - Inventory
+      parameters:
+        - name: shop_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: variant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                in_stock:
+                  type: boolean
+                stock_quantity:
+                  type: number
+                  nullable: true
+                low_stock_threshold:
+                  type: number
+                  nullable: true
+                lead_time_days:
+                  type: integer
+                minimum_order_quantity:
+                  type: number
+                maximum_order_quantity:
+                  type: number
+                  nullable: true
+      responses:
+        "200":
+          description: Inventory updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inventory"
+    delete:
+      operationId: removeInventoryItem
+      summary: Remove item from inventory
+      tags:
+        - Inventory
+      parameters:
+        - name: shop_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: variant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Inventory item removed successfully
+  /analytics/events:
+    post:
+      operationId: trackAnalyticsEvent
+      summary: Track user interaction event
+      tags:
+        - Analytics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - event_type
+              properties:
+                event_type:
+                  type: string
+                event_data:
+                  type: object
+                  nullable: true
+                page_url:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Event tracked successfully
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: object
+                nullable: true
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Unauthorized
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Forbidden
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Not found
+    Conflict:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: object
+                nullable: true
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        name:
+          type: string
+        user_type:
+          type: string
+          enum:
+            - buyer
+            - seller
+        location_lat:
+          type: number
+          nullable: true
+        location_lng:
+          type: number
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        preferences:
+          type: object
+          nullable: true
+        is_verified:
+          type: boolean
+        last_login:
+          type: number
+          nullable: true
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Shop:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        name:
+          type: string
+        phones:
+          type: array
+          items:
+            type: string
+        location_lat:
+          type: number
+        location_lng:
+          type: number
+        address:
+          type: string
+        hours:
+          type: object
+          nullable: true
+        verified:
+          type: boolean
+        business_license:
+          type: string
+          nullable: true
+        shop_type:
+          type: string
+          nullable: true
+        delivery_available:
+          type: boolean
+        delivery_radius:
+          type: number
+          nullable: true
+        delivery_fee_base:
+          type: number
+          nullable: true
+        delivery_fee_per_km:
+          type: number
+          nullable: true
+        minimum_order:
+          type: number
+          nullable: true
+        cash_discount_percentage:
+          type: number
+          nullable: true
+        rating_average:
+          type: number
+        rating_count:
+          type: integer
+        response_time_hours:
+          type: number
+          nullable: true
+        stock_accuracy_score:
+          type: number
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        parent_id:
+          type: string
+          nullable: true
+        category_path:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        sort_order:
+          type: integer
+        is_active:
+          type: boolean
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        canonical_name:
+          type: string
+        category_id:
+          type: string
+        subcategory:
+          type: string
+          nullable: true
+        base_unit:
+          type: string
+        description:
+          type: string
+          nullable: true
+        specifications:
+          type: object
+          nullable: true
+        synonyms:
+          type: array
+          items:
+            type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        waste_factor_percentage:
+          type: number
+        is_active:
+          type: boolean
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    ProductVariant:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+        brand:
+          type: string
+          nullable: true
+        grade:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        pack_quantity:
+          type: number
+          nullable: true
+        pack_unit:
+          type: string
+          nullable: true
+        unit_to_base_factor:
+          type: number
+        sku:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        specifications:
+          type: object
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Price:
+      type: object
+      properties:
+        id:
+          type: string
+        shop_id:
+          type: string
+        variant_id:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        price_per_base_unit:
+          type: number
+        bulk_pricing_tiers:
+          type: array
+          items:
+            type: object
+          nullable: true
+        promotional_price:
+          type: number
+          nullable: true
+        promotion_start_date:
+          type: number
+          nullable: true
+        promotion_end_date:
+          type: number
+          nullable: true
+        source:
+          type: string
+        verified:
+          type: boolean
+        verifications_count:
+          type: integer
+        last_verified_at:
+          type: number
+          nullable: true
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Inventory:
+      type: object
+      properties:
+        shop_id:
+          type: string
+        variant_id:
+          type: string
+        in_stock:
+          type: boolean
+        stock_quantity:
+          type: number
+          nullable: true
+        low_stock_threshold:
+          type: number
+          nullable: true
+        lead_time_days:
+          type: integer
+        minimum_order_quantity:
+          type: number
+        maximum_order_quantity:
+          type: number
+          nullable: true
+        updated_at:
+          type: number
+    BOM:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        project_type:
+          type: string
+          nullable: true
+        template:
+          type: string
+          nullable: true
+        total_cost:
+          type: number
+        item_count:
+          type: integer
+        status:
+          type: string
+          enum:
+            - draft
+            - active
+            - completed
+            - archived
+        shared_token:
+          type: string
+          nullable: true
+        is_public:
+          type: boolean
+        duplicate_source_id:
+          type: string
+          nullable: true
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    BOMItem:
+      type: object
+      properties:
+        id:
+          type: string
+        bom_id:
+          type: string
+        variant_id:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        waste_factor:
+          type: number
+        total_quantity_needed:
+          type: number
+        estimated_price_per_unit:
+          type: number
+          nullable: true
+        total_estimated_cost:
+          type: number
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        sort_order:
+          type: integer
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    RFQ:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        bom_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - pending
+            - active
+            - closed
+            - cancelled
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+            - urgent
+        deadline:
+          type: number
+          nullable: true
+        delivery_location_lat:
+          type: number
+          nullable: true
+        delivery_location_lng:
+          type: number
+          nullable: true
+        delivery_address:
+          type: string
+          nullable: true
+        special_requirements:
+          type: string
+          nullable: true
+        budget_limit:
+          type: number
+          nullable: true
+        responses_count:
+          type: integer
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    RFQReply:
+      type: object
+      properties:
+        id:
+          type: string
+        rfq_id:
+          type: string
+        shop_id:
+          type: string
+        total_price:
+          type: number
+        delivery_fee:
+          type: number
+        delivery_days:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        terms_conditions:
+          type: string
+          nullable: true
+        valid_until:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum:
+            - pending
+            - accepted
+            - rejected
+        line_items:
+          type: array
+          items:
+            type: object
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        rfq_id:
+          type: string
+        sender_id:
+          type: string
+        message:
+          type: string
+        message_type:
+          type: string
+          enum:
+            - text
+            - image
+            - document
+        attachments:
+          type: array
+          items:
+            type: object
+          nullable: true
+        read_at:
+          type: number
+          nullable: true
+        created_at:
+          type: number
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        type:
+          type: string
+        variant_id:
+          type: string
+          nullable: true
+        shop_id:
+          type: string
+          nullable: true
+        threshold_value:
+          type: number
+          nullable: true
+        condition_type:
+          type: string
+        notification_methods:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+        triggered_count:
+          type: integer
+        last_triggered_at:
+          type: number
+          nullable: true
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+        read_at:
+          type: number
+          nullable: true
+        action_url:
+          type: string
+          nullable: true
+        priority:
+          type: string
+          enum:
+            - low
+            - normal
+            - high
+            - urgent
+        created_at:
+          type: number
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        shop_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        review_text:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            type: object
+          nullable: true
+        verified_purchase:
+          type: boolean
+        helpful_votes:
+          type: integer
+        total_votes:
+          type: integer
+        status:
+          type: string
+          enum:
+            - active
+            - hidden
+            - flagged
+        created_at:
+          type: number
+        updated_at:
+          type: number
+    Favorite:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        favorite_type:
+          type: string
+          enum:
+            - shop
+            - variant
+            - bom
+        shop_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        bom_id:
+          type: string
+          nullable: true
+        created_at:
+          type: number

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702366605,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_LanguageToggle",
+      "version": "latest"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_LanguageToggle.tsx",
+      "type": "text",
+      "size": 11501,
+      "dependencies": false
+    }
+  ]
+}

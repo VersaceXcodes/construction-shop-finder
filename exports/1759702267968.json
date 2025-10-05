@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759702267968,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/package.json",
+      "type": "text",
+      "size": 2974,
+      "dependencies": true
+    }
+  ]
+}

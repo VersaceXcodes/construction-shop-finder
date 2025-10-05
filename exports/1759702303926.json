@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702303926,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_TripPlanner",
+      "version": "1759702200387"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_TripPlanner.tsx",
+      "type": "text",
+      "size": 27655,
+      "dependencies": false
+    }
+  ]
+}

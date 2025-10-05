@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702347708,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_AlertManagement",
+      "version": "latest"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_AlertManagement.tsx",
+      "type": "text",
+      "size": 46538,
+      "dependencies": false
+    }
+  ]
+}

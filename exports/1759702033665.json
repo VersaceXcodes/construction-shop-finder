@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702033665,
+  "operation": {
+    "id": "webapp:react:store",
+    "refs": {
+      "id": "redux",
+      "version": "1759701927149"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/store/main.tsx",
+      "type": "text",
+      "size": 29987,
+      "dependencies": false
+    }
+  ]
+}

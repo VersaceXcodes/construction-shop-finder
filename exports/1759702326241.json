@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702326241,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_ShopDashboard",
+      "version": "latest"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_ShopDashboard.tsx",
+      "type": "text",
+      "size": 29699,
+      "dependencies": false
+    }
+  ]
+}

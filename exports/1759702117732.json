@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759702117732,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/package.json",
+      "type": "text",
+      "size": 1484,
+      "dependencies": true
+    }
+  ]
+}

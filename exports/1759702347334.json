@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702347334,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_TopNavigation",
+      "version": "1759702201516"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_TopNavigation.tsx",
+      "type": "text",
+      "size": 33871,
+      "dependencies": false
+    }
+  ]
+}

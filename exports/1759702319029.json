@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702319029,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_SearchBar",
+      "version": "1759702201683"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_SearchBar.tsx",
+      "type": "text",
+      "size": 19938,
+      "dependencies": false
+    }
+  ]
+}

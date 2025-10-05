@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759701904803,
+  "operation": {
+    "id": "backend:server:main"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/server.ts",
+      "type": "text",
+      "size": 154726,
+      "dependencies": false
+    }
+  ]
+}

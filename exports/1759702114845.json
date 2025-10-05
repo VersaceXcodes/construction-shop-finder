@@ -1,0 +1,21 @@
+{
+  "timestamp": 1759702114845,
+  "operation": {
+    "id": "backend:tests:main"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/server.test.ts",
+      "type": "text",
+      "size": 52639,
+      "dependencies": false
+    },
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/jest.config.ts",
+      "type": "text",
+      "size": 658,
+      "dependencies": false
+    }
+  ]
+}

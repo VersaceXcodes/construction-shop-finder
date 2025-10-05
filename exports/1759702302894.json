@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702302894,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_UserProfile",
+      "version": "1759702199895"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_UserProfile.tsx",
+      "type": "text",
+      "size": 28055,
+      "dependencies": false
+    }
+  ]
+}

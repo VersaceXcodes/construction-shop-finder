@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702349906,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_ComparisonTable",
+      "version": "1759702199375"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_ComparisonTable.tsx",
+      "type": "text",
+      "size": 41026,
+      "dependencies": false
+    }
+  ]
+}

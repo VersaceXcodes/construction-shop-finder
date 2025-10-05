@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759700351460,
+  "operation": {
+    "id": "db:postgres"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/db.sql",
+      "type": "text",
+      "size": 36321,
+      "dependencies": false
+    }
+  ]
+}

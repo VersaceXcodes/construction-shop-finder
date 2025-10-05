@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702360657,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_NotificationCenter",
+      "version": "1759702201764"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/GV_NotificationCenter.tsx",
+      "type": "text",
+      "size": 20160,
+      "dependencies": false
+    }
+  ]
+}

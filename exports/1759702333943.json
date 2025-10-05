@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702333943,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_BarcodeScanner",
+      "version": "1759702200292"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_BarcodeScanner.tsx",
+      "type": "text",
+      "size": 31668,
+      "dependencies": false
+    }
+  ]
+}

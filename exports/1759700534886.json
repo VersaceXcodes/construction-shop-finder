@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759700534886,
+  "operation": {
+    "id": "backend:specifications:asyncapi"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/asyncapi.yaml",
+      "type": "text",
+      "size": 32404,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "timestamp": 1759700448726,
+  "operation": {
+    "id": "db:schemas:zod"
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/backend/schema.ts",
+      "type": "text",
+      "size": 28829,
+      "dependencies": false
+    }
+  ]
+}

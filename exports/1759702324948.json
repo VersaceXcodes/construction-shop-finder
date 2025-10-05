@@ -1,0 +1,19 @@
+{
+  "timestamp": 1759702324948,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_InventoryManager",
+      "version": "latest"
+    }
+  },
+  "projectId": "construction-shop-finder",
+  "files": [
+    {
+      "path": "/mnt/data/construction-shop-finder/vitereact/src/components/views/UV_InventoryManager.tsx",
+      "type": "text",
+      "size": 34442,
+      "dependencies": false
+    }
+  ]
+}
