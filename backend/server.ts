@@ -4399,6 +4399,14 @@ async function optimizeTripRoute(bomItems, shopIds, startLocation, returnToStart
   return mockRoute;
 }
 
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/assets')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    res.status(404).json(createErrorResponse('Not found', null, 'NOT_FOUND'));
+  }
+});
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
