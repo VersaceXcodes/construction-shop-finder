@@ -340,7 +340,7 @@ export const useAppStore = create<AppStore>()(
             `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/register`,
             {
               email: userData.email,
-              password: userData.password,
+              password_hash: userData.password,
               name: userData.name,
               user_type: userData.user_type,
               phone: userData.phone || null,

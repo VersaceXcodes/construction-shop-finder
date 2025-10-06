@@ -65,7 +65,7 @@ describe('Auth E2E Flow (Vitest, real API)', () => {
       expect(screen.getByText(/Choose Your Account Type/i)).toBeInTheDocument();
     });
 
-    const buyerButton = screen.getByRole('button', { name: /Buyer/i });
+    const buyerButton = screen.getByRole('button', { name: /Buyer \/ Contractor/i });
     await user.click(buyerButton);
 
     await waitFor(() => {
@@ -164,9 +164,10 @@ describe('Auth E2E Flow (Vitest, real API)', () => {
   }, 60000);
 
   it('registers a new seller account successfully', async () => {
-    const sellerEmail = `seller${Date.now()}@example.com`;
+    const timestamp = Date.now();
+    const sellerEmail = `seller${timestamp}@example.com`;
     const testPassword = 'testpass123';
-    const sellerPhone = '+971501234567';
+    const sellerPhone = `+97150${timestamp.toString().slice(-7)}`;
     
     const user = userEvent.setup();
 
