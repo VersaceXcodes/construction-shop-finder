@@ -41,7 +41,7 @@ const pool = new Pool(
   DATABASE_URL
     ? { 
         connectionString: DATABASE_URL, 
-        ssl: { require: true } 
+        ssl: { rejectUnauthorized: false } as any
       }
     : {
         host: PGHOST,
@@ -49,7 +49,7 @@ const pool = new Pool(
         user: PGUSER,
         password: PGPASSWORD,
         port: Number(PGPORT),
-        ssl: { require: true },
+        ssl: { rejectUnauthorized: false } as any,
       }
 );
 
@@ -126,8 +126,8 @@ const upload = multer({
 });
 
 // Error response utility
-function createErrorResponse(message, error = null, errorCode = null) {
-  const response = {
+function createErrorResponse(message: any, error: any = null, errorCode: any = null): any {
+  const response: any = {
     success: false,
     message,
     timestamp: new Date().toISOString()
@@ -160,14 +160,14 @@ function generateUUID() {
 // Authentication middleware
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = authHeader && (authHeader as string).split(' ')[1];
 
   if (!token) {
     return res.status(401).json(createErrorResponse('Access token required', null, 'AUTH_TOKEN_REQUIRED'));
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
     const result = await pool.query('SELECT id, email, name, user_type, created_at FROM users WHERE id = $1', [decoded.user_id]);
     
     if (result.rows.length === 0) {
@@ -184,11 +184,11 @@ const authenticateToken = async (req, res, next) => {
 // Optional authentication middleware
 const optionalAuth = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = authHeader && (authHeader as string).split(' ')[1];
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
       const result = await pool.query('SELECT id, email, name, user_type, created_at FROM users WHERE id = $1', [decoded.user_id]);
       
       if (result.rows.length > 0) {
@@ -422,7 +422,7 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     const { query, user_type, is_verified, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (query) {
@@ -434,13 +434,13 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     if (user_type) {
       paramCount++;
       whereConditions.push(`user_type = $${paramCount}`);
-      queryParams.push(user_type);
+      queryParams.push(user_type as any);
     }
 
     if (is_verified !== undefined) {
       paramCount++;
       whereConditions.push(`is_verified = $${paramCount}`);
-      queryParams.push(is_verified);
+      queryParams.push(is_verified as any);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -510,37 +510,37 @@ app.put('/api/users/:user_id', authenticateToken, async (req, res) => {
     const { name, phone, location_lat, location_lng, address, preferences, is_verified } = validatedData;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (name !== undefined) {
       paramCount++;
       updateFields.push(`name = $${paramCount}`);
-      queryParams.push(name);
+      queryParams.push(name as any);
     }
 
     if (phone !== undefined) {
       paramCount++;
       updateFields.push(`phone = $${paramCount}`);
-      queryParams.push(phone);
+      queryParams.push(phone as any);
     }
 
     if (location_lat !== undefined) {
       paramCount++;
       updateFields.push(`location_lat = $${paramCount}`);
-      queryParams.push(location_lat);
+      queryParams.push(location_lat as any);
     }
 
     if (location_lng !== undefined) {
       paramCount++;
       updateFields.push(`location_lng = $${paramCount}`);
-      queryParams.push(location_lng);
+      queryParams.push(location_lng as any);
     }
 
     if (address !== undefined) {
       paramCount++;
       updateFields.push(`address = $${paramCount}`);
-      queryParams.push(address);
+      queryParams.push(address as any);
     }
 
     if (preferences !== undefined) {
@@ -552,7 +552,7 @@ app.put('/api/users/:user_id', authenticateToken, async (req, res) => {
     if (is_verified !== undefined) {
       paramCount++;
       updateFields.push(`is_verified = $${paramCount}`);
-      queryParams.push(is_verified);
+      queryParams.push(is_verified as any);
     }
 
     if (updateFields.length === 0) {
@@ -564,7 +564,7 @@ app.put('/api/users/:user_id', authenticateToken, async (req, res) => {
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(user_id);
+    queryParams.push(user_id as any);
 
     const result = await pool.query(
       `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${paramCount} 
@@ -614,7 +614,7 @@ app.get('/api/shops', optionalAuth, async (req, res) => {
     const { query, shop_type, verified, delivery_available, location_lat, location_lng, radius_km, min_rating, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (query) {
@@ -626,25 +626,25 @@ app.get('/api/shops', optionalAuth, async (req, res) => {
     if (shop_type) {
       paramCount++;
       whereConditions.push(`shop_type = $${paramCount}`);
-      queryParams.push(shop_type);
+      queryParams.push(shop_type as any);
     }
 
     if (verified !== undefined) {
       paramCount++;
       whereConditions.push(`verified = $${paramCount}`);
-      queryParams.push(verified);
+      queryParams.push(verified as any);
     }
 
     if (delivery_available !== undefined) {
       paramCount++;
       whereConditions.push(`delivery_available = $${paramCount}`);
-      queryParams.push(delivery_available);
+      queryParams.push(delivery_available as any);
     }
 
     if (min_rating !== undefined) {
       paramCount++;
       whereConditions.push(`rating_average >= $${paramCount}`);
-      queryParams.push(min_rating);
+      queryParams.push(min_rating as any);
     }
 
     // Distance filtering if location provided
@@ -763,7 +763,7 @@ app.put('/api/shops/:shop_id', authenticateToken, async (req, res) => {
     delete updateData.id;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     Object.entries(updateData).forEach(([key, value]) => {
@@ -774,7 +774,7 @@ app.put('/api/shops/:shop_id', authenticateToken, async (req, res) => {
           queryParams.push(JSON.stringify(value));
         } else {
           updateFields.push(`${key} = $${paramCount}`);
-          queryParams.push(value);
+          queryParams.push(value as any);
         }
       }
     });
@@ -788,7 +788,7 @@ app.put('/api/shops/:shop_id', authenticateToken, async (req, res) => {
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(shop_id);
+    queryParams.push(shop_id as any);
 
     const result = await pool.query(
       `UPDATE shops SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
@@ -815,13 +815,13 @@ app.get('/api/shops/near-me', optionalAuth, async (req, res) => {
     }
 
     let whereConditions = ['true'];
-    let queryParams = [parseFloat(lat), parseFloat(lng), parseFloat(radius)];
+    let queryParams: any[] = [parseFloat(lat as string), parseFloat(lng as string), parseFloat(radius as any)];
     let paramCount = 3;
 
     if (shop_type) {
       paramCount++;
       whereConditions.push(`shop_type = $${paramCount}`);
-      queryParams.push(shop_type);
+      queryParams.push(shop_type as any);
     }
 
     // Distance calculation and filtering
@@ -833,7 +833,7 @@ app.get('/api/shops/near-me', optionalAuth, async (req, res) => {
        AND (6371 * acos(cos(radians($1)) * cos(radians(s.location_lat)) * cos(radians(s.location_lng) - radians($2)) + sin(radians($1)) * sin(radians(s.location_lat)))) <= $3
        ORDER BY distance_km ASC
        LIMIT $${paramCount + 1}`,
-      [...queryParams, parseInt(limit)]
+      [...queryParams, parseInt(limit as any)]
     );
 
     // Get top prices for each shop if product_search is provided
@@ -883,13 +883,13 @@ app.get('/api/categories', optionalAuth, async (req, res) => {
     const { parent_id, query, is_active, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (parent_id !== undefined) {
       paramCount++;
       whereConditions.push(`parent_id ${parent_id === null ? 'IS NULL' : '= $' + paramCount}`);
-      if (parent_id !== null) queryParams.push(parent_id);
+      if (parent_id !== null) queryParams.push(parent_id as any);
     }
 
     if (query) {
@@ -901,7 +901,7 @@ app.get('/api/categories', optionalAuth, async (req, res) => {
     if (is_active !== undefined) {
       paramCount++;
       whereConditions.push(`is_active = $${paramCount}`);
-      queryParams.push(is_active);
+      queryParams.push(is_active as any);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -988,7 +988,7 @@ app.get('/api/products', optionalAuth, async (req, res) => {
     const { query, category_id, subcategory, is_active, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (query) {
@@ -1000,19 +1000,19 @@ app.get('/api/products', optionalAuth, async (req, res) => {
     if (category_id) {
       paramCount++;
       whereConditions.push(`category_id = $${paramCount}`);
-      queryParams.push(category_id);
+      queryParams.push(category_id as any);
     }
 
     if (subcategory) {
       paramCount++;
       whereConditions.push(`subcategory = $${paramCount}`);
-      queryParams.push(subcategory);
+      queryParams.push(subcategory as any);
     }
 
     if (is_active !== undefined) {
       paramCount++;
       whereConditions.push(`is_active = $${paramCount}`);
-      queryParams.push(is_active);
+      queryParams.push(is_active as any);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -1095,13 +1095,13 @@ app.get('/api/products/:product_id', optionalAuth, async (req, res) => {
         i.in_stock, i.stock_quantity, i.lead_time_days, i.minimum_order_quantity
     `;
 
-    let queryParams = [product_id];
+    let queryParams: any[] = [product_id];
     let paramCount = 1;
 
     if (location_lat && location_lng) {
       variantQuery += `, (6371 * acos(cos(radians($${paramCount + 1})) * cos(radians(s.location_lat)) * cos(radians(s.location_lng) - radians($${paramCount + 2})) + sin(radians($${paramCount + 1})) * sin(radians(s.location_lat)))) as distance_km`;
       paramCount += 2;
-      queryParams.push(parseFloat(location_lat), parseFloat(location_lng));
+      queryParams.push(parseFloat(location_lat as any), parseFloat(location_lng as any));
     }
 
     variantQuery += `
@@ -1115,7 +1115,7 @@ app.get('/api/products/:product_id', optionalAuth, async (req, res) => {
     if (shop_id) {
       paramCount++;
       variantQuery += ` AND s.id = $${paramCount}`;
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     }
 
     if (location_lat && location_lng && radius) {
@@ -1207,25 +1207,25 @@ app.get('/api/products/:product_id/variants', optionalAuth, async (req, res) => 
     const { brand, grade, is_active = true } = req.query;
 
     let whereConditions = [`product_id = $1`];
-    let queryParams = [product_id];
+    let queryParams: any[] = [product_id];
     let paramCount = 1;
 
     if (brand) {
       paramCount++;
       whereConditions.push(`brand = $${paramCount}`);
-      queryParams.push(brand);
+      queryParams.push(brand as any);
     }
 
     if (grade) {
       paramCount++;
       whereConditions.push(`grade = $${paramCount}`);
-      queryParams.push(grade);
+      queryParams.push(grade as any);
     }
 
     if (is_active !== undefined) {
       paramCount++;
       whereConditions.push(`is_active = $${paramCount}`);
-      queryParams.push(is_active);
+      queryParams.push(is_active as any);
     }
 
     const result = await pool.query(
@@ -1254,7 +1254,7 @@ app.get('/api/product-variants', optionalAuth, async (req, res) => {
     const { query, product_id, brand, grade, is_active, limit, offset } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (query) {
@@ -1266,25 +1266,25 @@ app.get('/api/product-variants', optionalAuth, async (req, res) => {
     if (product_id) {
       paramCount++;
       whereConditions.push(`product_id = $${paramCount}`);
-      queryParams.push(product_id);
+      queryParams.push(product_id as any);
     }
 
     if (brand) {
       paramCount++;
       whereConditions.push(`brand = $${paramCount}`);
-      queryParams.push(brand);
+      queryParams.push(brand as any);
     }
 
     if (grade) {
       paramCount++;
       whereConditions.push(`grade = $${paramCount}`);
-      queryParams.push(grade);
+      queryParams.push(grade as any);
     }
 
     if (is_active !== undefined) {
       paramCount++;
       whereConditions.push(`is_active = $${paramCount}`);
-      queryParams.push(is_active);
+      queryParams.push(is_active as any);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -1371,43 +1371,43 @@ app.get('/api/prices', optionalAuth, async (req, res) => {
     const { variant_id, shop_id, min_price, max_price, currency, verified, has_promotion, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (variant_id) {
       paramCount++;
       whereConditions.push(`pr.variant_id = $${paramCount}`);
-      queryParams.push(variant_id);
+      queryParams.push(variant_id as any);
     }
 
     if (shop_id) {
       paramCount++;
       whereConditions.push(`pr.shop_id = $${paramCount}`);
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     }
 
     if (min_price !== undefined) {
       paramCount++;
       whereConditions.push(`pr.price >= $${paramCount}`);
-      queryParams.push(min_price);
+      queryParams.push(min_price as any);
     }
 
     if (max_price !== undefined) {
       paramCount++;
       whereConditions.push(`pr.price <= $${paramCount}`);
-      queryParams.push(max_price);
+      queryParams.push(max_price as any);
     }
 
     if (currency) {
       paramCount++;
       whereConditions.push(`pr.currency = $${paramCount}`);
-      queryParams.push(currency);
+      queryParams.push(currency as any);
     }
 
     if (verified !== undefined) {
       paramCount++;
       whereConditions.push(`pr.verified = $${paramCount}`);
-      queryParams.push(verified);
+      queryParams.push(verified as any);
     }
 
     if (has_promotion !== undefined) {
@@ -1621,10 +1621,10 @@ app.get('/api/prices/compare', optionalAuth, async (req, res) => {
     let variantIdList = [];
     
     if (variant_ids) {
-      variantIdList = variant_ids.split(',');
+      variantIdList = (variant_ids as string).split(',');
     } else if (product_ids) {
       // Get variants for products
-      const productIdList = product_ids.split(',');
+      const productIdList = (product_ids as string).split(',');
       const variantsResult = await pool.query(
         'SELECT id FROM product_variants WHERE product_id = ANY($1) AND is_active = true',
         [productIdList]
@@ -1637,21 +1637,21 @@ app.get('/api/prices/compare', optionalAuth, async (req, res) => {
     }
 
     let shopFilter = '';
-    let queryParams = [variantIdList, parseFloat(quantity), parseFloat(waste_factor)];
+    let queryParams: any[] = [variantIdList, parseFloat(quantity as any), parseFloat(waste_factor as any)];
     let paramCount = 3;
 
     if (shop_ids) {
-      const shopIdList = shop_ids.split(',');
+      const shopIdList = (shop_ids as string).split(',');
       paramCount++;
       shopFilter = ` AND s.id = ANY($${paramCount})`;
-      queryParams.push(shopIdList);
+      queryParams.push(shopIdList as any);
     }
 
     let distanceSelect = '';
     if (location_lat && location_lng) {
       distanceSelect = `, (6371 * acos(cos(radians($${paramCount + 1})) * cos(radians(s.location_lat)) * cos(radians(s.location_lng) - radians($${paramCount + 2})) + sin(radians($${paramCount + 1})) * sin(radians(s.location_lat)))) as distance_km`;
       paramCount += 2;
-      queryParams.push(parseFloat(location_lat), parseFloat(location_lng));
+      queryParams.push(parseFloat(location_lat as any), parseFloat(location_lng as any));
     }
 
     // Get comprehensive comparison data
@@ -1697,7 +1697,7 @@ app.get('/api/prices/compare', optionalAuth, async (req, res) => {
         });
       }
 
-      const adjustedQuantity = parseFloat(quantity) * (1 + parseFloat(waste_factor));
+      const adjustedQuantity = parseFloat(quantity as any) * (1 + parseFloat(waste_factor as any));
       const totalPrice = row.price_per_base_unit * adjustedQuantity;
       let deliveryFee = 0;
 
@@ -1756,11 +1756,11 @@ app.get('/api/prices/compare', optionalAuth, async (req, res) => {
 // GET /api/boms - Get user's bill of materials
 app.get('/api/boms', authenticateToken, async (req, res) => {
   try {
-    const params = searchBomsInputSchema.parse({ user_id: req.user.id, ...req.query });
+    const params: any = searchBomsInputSchema.parse({ user_id: req.user.id, ...req.query });
     const { query, project_type, status, is_public, template, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [`user_id = $1`];
-    let queryParams = [req.user.id];
+    let queryParams: any[] = [req.user.id];
     let paramCount = 1;
 
     if (query) {
@@ -1772,25 +1772,25 @@ app.get('/api/boms', authenticateToken, async (req, res) => {
     if (project_type) {
       paramCount++;
       whereConditions.push(`project_type = $${paramCount}`);
-      queryParams.push(project_type);
+      queryParams.push(project_type as any);
     }
 
     if (status) {
       paramCount++;
       whereConditions.push(`status = $${paramCount}`);
-      queryParams.push(status);
+      queryParams.push(status as any);
     }
 
     if (is_public !== undefined) {
       paramCount++;
       whereConditions.push(`is_public = $${paramCount}`);
-      queryParams.push(is_public);
+      queryParams.push(is_public as any);
     }
 
     if (template) {
       paramCount++;
       whereConditions.push(`template = $${paramCount}`);
-      queryParams.push(template);
+      queryParams.push(template as any);
     }
 
     const whereClause = whereConditions.join(' AND ');
@@ -1933,14 +1933,14 @@ app.put('/api/boms/:bom_id', authenticateToken, async (req, res) => {
     delete updateData.id;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     Object.entries(updateData).forEach(([key, value]) => {
       if (value !== undefined) {
         paramCount++;
         updateFields.push(`${key} = $${paramCount}`);
-        queryParams.push(value);
+        queryParams.push(value as any);
       }
     });
 
@@ -1953,7 +1953,7 @@ app.put('/api/boms/:bom_id', authenticateToken, async (req, res) => {
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(bom_id);
+    queryParams.push(bom_id as any);
 
     const result = await pool.query(
       `UPDATE boms SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
@@ -2091,7 +2091,7 @@ app.post('/api/boms/:bom_id/items', authenticateToken, async (req, res) => {
 
     const itemId = generateUUID();
     const timestamp = Date.now();
-    const totalQuantityNeeded = parseFloat(quantity) * (1 + parseFloat(waste_factor));
+    const totalQuantityNeeded = parseFloat(quantity as any) * (1 + parseFloat(waste_factor as any));
 
     // Add item
     const result = await pool.query(
@@ -2131,43 +2131,43 @@ app.put('/api/boms/:bom_id/items/:item_id', authenticateToken, async (req, res) 
     const { quantity, unit, waste_factor, notes, sort_order } = req.body;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (quantity !== undefined) {
       paramCount++;
       updateFields.push(`quantity = $${paramCount}`);
-      queryParams.push(quantity);
+      queryParams.push(quantity as any);
       
       // Recalculate total quantity needed
       const currentWasteFactor = waste_factor !== undefined ? waste_factor : 0;
       paramCount++;
       updateFields.push(`total_quantity_needed = $${paramCount}`);
-      queryParams.push(parseFloat(quantity) * (1 + parseFloat(currentWasteFactor)));
+      queryParams.push(parseFloat(quantity as any) * (1 + parseFloat(currentWasteFactor as any)));
     }
 
     if (unit !== undefined) {
       paramCount++;
       updateFields.push(`unit = $${paramCount}`);
-      queryParams.push(unit);
+      queryParams.push(unit as any);
     }
 
     if (waste_factor !== undefined) {
       paramCount++;
       updateFields.push(`waste_factor = $${paramCount}`);
-      queryParams.push(waste_factor);
+      queryParams.push(waste_factor as any);
     }
 
     if (notes !== undefined) {
       paramCount++;
       updateFields.push(`notes = $${paramCount}`);
-      queryParams.push(notes);
+      queryParams.push(notes as any);
     }
 
     if (sort_order !== undefined) {
       paramCount++;
       updateFields.push(`sort_order = $${paramCount}`);
-      queryParams.push(sort_order);
+      queryParams.push(sort_order as any);
     }
 
     if (updateFields.length === 0) {
@@ -2179,7 +2179,7 @@ app.put('/api/boms/:bom_id/items/:item_id', authenticateToken, async (req, res) 
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(item_id);
+    queryParams.push(item_id as any);
 
     const result = await pool.query(
       `UPDATE bom_items SET ${updateFields.join(', ')} WHERE id = $${paramCount} AND bom_id = '${bom_id}' RETURNING *`,
@@ -2470,11 +2470,11 @@ app.get('/api/boms/shared/:token', optionalAuth, async (req, res) => {
 // GET /api/rfqs - Get user's RFQs with filtering
 app.get('/api/rfqs', authenticateToken, async (req, res) => {
   try {
-    const params = searchRfqsInputSchema.parse(req.query);
+    const params: any = searchRfqsInputSchema.parse(req.query);
     const { query, status, priority, has_deadline, shop_id, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     // Different view for buyers vs sellers
@@ -2486,7 +2486,7 @@ app.get('/api/rfqs', authenticateToken, async (req, res) => {
       // For sellers, show RFQs they've been invited to or have responded to
       paramCount++;
       whereConditions.push(`EXISTS (SELECT 1 FROM rfq_shop_invites rsi WHERE rsi.rfq_id = r.id AND rsi.shop_id = $${paramCount})`);
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     } else {
       return res.status(400).json(createErrorResponse('shop_id required for seller accounts', null, 'SHOP_ID_REQUIRED'));
     }
@@ -2500,13 +2500,13 @@ app.get('/api/rfqs', authenticateToken, async (req, res) => {
     if (status) {
       paramCount++;
       whereConditions.push(`r.status = $${paramCount}`);
-      queryParams.push(status);
+      queryParams.push(status as any);
     }
 
     if (priority) {
       paramCount++;
       whereConditions.push(`r.priority = $${paramCount}`);
-      queryParams.push(priority);
+      queryParams.push(priority as any);
     }
 
     if (has_deadline !== undefined) {
@@ -2723,14 +2723,14 @@ app.put('/api/rfqs/:rfq_id', authenticateToken, async (req, res) => {
     delete updateData.id;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     Object.entries(updateData).forEach(([key, value]) => {
       if (value !== undefined) {
         paramCount++;
         updateFields.push(`${key} = $${paramCount}`);
-        queryParams.push(value);
+        queryParams.push(value as any);
       }
     });
 
@@ -2743,7 +2743,7 @@ app.put('/api/rfqs/:rfq_id', authenticateToken, async (req, res) => {
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(rfq_id);
+    queryParams.push(rfq_id as any);
 
     const result = await pool.query(
       `UPDATE rfqs SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
@@ -2869,13 +2869,13 @@ app.get('/api/rfqs/:rfq_id/replies', authenticateToken, async (req, res) => {
     }
 
     let whereConditions = [`rr.rfq_id = $1`];
-    let queryParams = [rfq_id];
+    let queryParams: any[] = [rfq_id];
     let paramCount = 1;
 
     if (status) {
       paramCount++;
       whereConditions.push(`rr.status = $${paramCount}`);
-      queryParams.push(status);
+      queryParams.push(status as any);
     }
 
     const result = await pool.query(
@@ -3016,7 +3016,7 @@ app.put('/api/rfqs/:rfq_id/replies/:reply_id', authenticateToken, async (req, re
 
     const updateData = req.body;
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     const allowedFields = ['status', 'total_price', 'delivery_fee', 'delivery_days', 'notes', 'terms_conditions', 'valid_until'];
@@ -3025,7 +3025,7 @@ app.put('/api/rfqs/:rfq_id/replies/:reply_id', authenticateToken, async (req, re
       if (allowedFields.includes(key) && value !== undefined) {
         paramCount++;
         updateFields.push(`${key} = $${paramCount}`);
-        queryParams.push(value);
+        queryParams.push(value as any);
       }
     });
 
@@ -3038,7 +3038,7 @@ app.put('/api/rfqs/:rfq_id/replies/:reply_id', authenticateToken, async (req, re
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(reply_id);
+    queryParams.push(reply_id as any);
 
     const result = await pool.query(
       `UPDATE rfq_replies SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
@@ -3102,7 +3102,7 @@ app.get('/api/rfqs/:rfq_id/messages', authenticateToken, async (req, res) => {
        WHERE m.rfq_id = $1
        ORDER BY m.created_at DESC
        LIMIT $2 OFFSET $3`,
-      [rfq_id, parseInt(limit), parseInt(offset)]
+      [rfq_id, parseInt(limit as any), parseInt(offset as any)]
     );
 
     const messages = result.rows.map(row => ({
@@ -3241,13 +3241,13 @@ app.get('/api/alerts', authenticateToken, async (req, res) => {
     const { type, active, variant_id, shop_id, limit = 20, offset = 0 } = req.query;
 
     let whereConditions = [`user_id = $1`];
-    let queryParams = [req.user.id];
+    let queryParams: any[] = [req.user.id];
     let paramCount = 1;
 
     if (type) {
       paramCount++;
       whereConditions.push(`type = $${paramCount}`);
-      queryParams.push(type);
+      queryParams.push(type as any);
     }
 
     if (active !== undefined) {
@@ -3259,13 +3259,13 @@ app.get('/api/alerts', authenticateToken, async (req, res) => {
     if (variant_id) {
       paramCount++;
       whereConditions.push(`variant_id = $${paramCount}`);
-      queryParams.push(variant_id);
+      queryParams.push(variant_id as any);
     }
 
     if (shop_id) {
       paramCount++;
       whereConditions.push(`shop_id = $${paramCount}`);
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     }
 
     const whereClause = whereConditions.join(' AND ');
@@ -3290,7 +3290,7 @@ app.get('/api/alerts', authenticateToken, async (req, res) => {
        WHERE ${whereClause}
        ORDER BY a.created_at DESC
        LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`,
-      [...queryParams, parseInt(limit), parseInt(offset)]
+      [...queryParams, parseInt(limit as any), parseInt(offset as any)]
     );
 
     const alerts = result.rows.map(row => ({
@@ -3404,19 +3404,19 @@ app.put('/api/alerts/:alert_id', authenticateToken, async (req, res) => {
     const { threshold_value, condition_type, notification_methods, active } = req.body;
 
     let updateFields = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (threshold_value !== undefined) {
       paramCount++;
       updateFields.push(`threshold_value = $${paramCount}`);
-      queryParams.push(threshold_value);
+      queryParams.push(threshold_value as any);
     }
 
     if (condition_type !== undefined) {
       paramCount++;
       updateFields.push(`condition_type = $${paramCount}`);
-      queryParams.push(condition_type);
+      queryParams.push(condition_type as any);
     }
 
     if (notification_methods !== undefined) {
@@ -3428,7 +3428,7 @@ app.put('/api/alerts/:alert_id', authenticateToken, async (req, res) => {
     if (active !== undefined) {
       paramCount++;
       updateFields.push(`active = $${paramCount}`);
-      queryParams.push(active);
+      queryParams.push(active as any);
     }
 
     if (updateFields.length === 0) {
@@ -3440,7 +3440,7 @@ app.put('/api/alerts/:alert_id', authenticateToken, async (req, res) => {
     queryParams.push(Date.now());
 
     paramCount++;
-    queryParams.push(alert_id);
+    queryParams.push(alert_id as any);
 
     const result = await pool.query(
       `UPDATE alerts SET ${updateFields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
@@ -3490,13 +3490,13 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
     const { type, is_read, priority, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [`user_id = $1`];
-    let queryParams = [req.user.id];
+    let queryParams: any[] = [req.user.id];
     let paramCount = 1;
 
     if (type) {
       paramCount++;
       whereConditions.push(`type = $${paramCount}`);
-      queryParams.push(type);
+      queryParams.push(type as any);
     }
 
     if (is_read !== undefined) {
@@ -3510,7 +3510,7 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
     if (priority) {
       paramCount++;
       whereConditions.push(`priority = $${paramCount}`);
-      queryParams.push(priority);
+      queryParams.push(priority as any);
     }
 
     const whereClause = whereConditions.join(' AND ');
@@ -3597,49 +3597,49 @@ app.get('/api/reviews', optionalAuth, async (req, res) => {
     const { shop_id, variant_id, user_id, min_rating, max_rating, verified_purchase, status, limit, offset, sort_by, sort_order } = params;
 
     let whereConditions = [];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     if (shop_id) {
       paramCount++;
       whereConditions.push(`shop_id = $${paramCount}`);
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     }
 
     if (variant_id) {
       paramCount++;
       whereConditions.push(`variant_id = $${paramCount}`);
-      queryParams.push(variant_id);
+      queryParams.push(variant_id as any);
     }
 
     if (user_id) {
       paramCount++;
       whereConditions.push(`user_id = $${paramCount}`);
-      queryParams.push(user_id);
+      queryParams.push(user_id as any);
     }
 
     if (min_rating !== undefined) {
       paramCount++;
       whereConditions.push(`rating >= $${paramCount}`);
-      queryParams.push(min_rating);
+      queryParams.push(min_rating as any);
     }
 
     if (max_rating !== undefined) {
       paramCount++;
       whereConditions.push(`rating <= $${paramCount}`);
-      queryParams.push(max_rating);
+      queryParams.push(max_rating as any);
     }
 
     if (verified_purchase !== undefined) {
       paramCount++;
       whereConditions.push(`verified_purchase = $${paramCount}`);
-      queryParams.push(verified_purchase);
+      queryParams.push(verified_purchase as any);
     }
 
     if (status) {
       paramCount++;
       whereConditions.push(`status = $${paramCount}`);
-      queryParams.push(status);
+      queryParams.push(status as any);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -3733,10 +3733,10 @@ app.post('/api/reviews', authenticateToken, async (req, res) => {
     
     if (shop_id) {
       existingReviewQuery += ' AND shop_id = $2';
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     } else {
       existingReviewQuery += ' AND variant_id = $2';
-      queryParams.push(variant_id);
+      queryParams.push(variant_id as any);
     }
 
     const existingReview = await pool.query(existingReviewQuery, queryParams);
@@ -3811,13 +3811,13 @@ app.get('/api/favorites', authenticateToken, async (req, res) => {
     const { favorite_type, limit = 20, offset = 0 } = req.query;
 
     let whereConditions = [`user_id = $1`];
-    let queryParams = [req.user.id];
+    let queryParams: any[] = [req.user.id];
     let paramCount = 1;
 
     if (favorite_type) {
       paramCount++;
       whereConditions.push(`favorite_type = $${paramCount}`);
-      queryParams.push(favorite_type);
+      queryParams.push(favorite_type as any);
     }
 
     const whereClause = whereConditions.join(' AND ');
@@ -3844,11 +3844,11 @@ app.get('/api/favorites', authenticateToken, async (req, res) => {
        WHERE ${whereClause}
        ORDER BY uf.created_at DESC
        LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`,
-      [...queryParams, parseInt(limit), parseInt(offset)]
+      [...queryParams, parseInt(limit as any), parseInt(offset as any)]
     );
 
     const favorites = result.rows.map(row => {
-      const favorite = {
+      const favorite: any = {
         id: row.id,
         user_id: row.user_id,
         favorite_type: row.favorite_type,
@@ -3933,13 +3933,13 @@ app.post('/api/favorites', authenticateToken, async (req, res) => {
 
     if (shop_id) {
       existingQuery += ' AND shop_id = $3';
-      queryParams.push(shop_id);
+      queryParams.push(shop_id as any);
     } else if (variant_id) {
       existingQuery += ' AND variant_id = $3';
-      queryParams.push(variant_id);
+      queryParams.push(variant_id as any);
     } else if (bom_id) {
       existingQuery += ' AND bom_id = $3';
-      queryParams.push(bom_id);
+      queryParams.push(bom_id as any);
     }
 
     const existing = await pool.query(existingQuery, queryParams);
@@ -3998,6 +3998,8 @@ app.get('/api/search', optionalAuth, async (req, res) => {
       return res.status(400).json(createErrorResponse('Search query (q) is required', null, 'MISSING_QUERY'));
     }
 
+    const limitNum = parseInt(limit as any) || 20;
+    const radiusNum = parseFloat(radius as any) || 10;
     const searchTerm = `%${q}%`;
     const results = {
       products: [],
@@ -4023,7 +4025,7 @@ app.get('/api/search', optionalAuth, async (req, res) => {
            END,
            p.canonical_name
          LIMIT $2`,
-        [searchTerm, Math.ceil(limit / (type === 'all' ? 3 : 1))]
+        [searchTerm, Math.ceil(limitNum / (type === 'all' ? 3 : 1))]
       );
 
       results.products = productsResult.rows;
@@ -4040,20 +4042,20 @@ app.get('/api/search', optionalAuth, async (req, res) => {
         WHERE (s.name ILIKE $1 OR s.address ILIKE $1)
       `;
 
-      const shopParams = [searchTerm];
+      const shopParams: any[] = [searchTerm];
       let paramCount = 1;
 
       if (location_lat && location_lng) {
         paramCount++;
-        shopParams.push(parseFloat(location_lat));
+        shopParams.push(parseFloat(location_lat as any));
         paramCount++;
-        shopParams.push(parseFloat(location_lng));
+        shopParams.push(parseFloat(location_lng as any));
 
-        shopQuery += ` AND (6371 * acos(cos(radians($${paramCount - 1})) * cos(radians(s.location_lat)) * cos(radians(s.location_lng) - radians($${paramCount})) + sin(radians($${paramCount - 1})) * sin(radians(s.location_lat)))) <= ${radius}`;
+        shopQuery += ` AND (6371 * acos(cos(radians($${paramCount - 1})) * cos(radians(s.location_lat)) * cos(radians(s.location_lng) - radians($${paramCount})) + sin(radians($${paramCount - 1})) * sin(radians(s.location_lat)))) <= ${radiusNum}`;
       }
 
       shopQuery += ` ORDER BY s.verified DESC, s.rating_average DESC LIMIT $${paramCount + 1}`;
-      shopParams.push(Math.ceil(limit / (type === 'all' ? 3 : 1)));
+      shopParams.push(Math.ceil(limitNum / (type === 'all' ? 3 : 1)));
 
       const shopsResult = await pool.query(shopQuery, shopParams);
       results.shops = shopsResult.rows;
@@ -4069,7 +4071,7 @@ app.get('/api/search', optionalAuth, async (req, res) => {
          AND is_active = true
          ORDER BY sort_order, name
          LIMIT $2`,
-        [searchTerm, Math.ceil(limit / (type === 'all' ? 3 : 1))]
+        [searchTerm, Math.ceil(limitNum / (type === 'all' ? 3 : 1))]
       );
 
       results.categories = categoriesResult.rows;
@@ -4169,7 +4171,7 @@ app.get('/api/search/history', authenticateToken, async (req, res) => {
        WHERE user_id = $1
        ORDER BY created_at DESC
        LIMIT $2 OFFSET $3`,
-      [req.user.id, parseInt(limit), parseInt(offset)]
+      [req.user.id, parseInt(limit as any), parseInt(offset as any)]
     );
 
     res.json({
@@ -4231,12 +4233,12 @@ app.get('/api/map/shops', optionalAuth, async (req, res) => {
     }
 
     let whereConditions = ['location_lat IS NOT NULL', 'location_lng IS NOT NULL'];
-    let queryParams = [];
+    let queryParams: any[] = [];
     let paramCount = 0;
 
     // Handle bounds filtering
     if (bounds) {
-      const [north, south, east, west] = bounds.split(',').map(parseFloat);
+      const [north, south, east, west] = (bounds as string).split(',').map(parseFloat);
       whereConditions.push(`location_lat BETWEEN $${paramCount + 1} AND $${paramCount + 2}`);
       whereConditions.push(`location_lng BETWEEN $${paramCount + 3} AND $${paramCount + 4}`);
       queryParams.push(south, north, west, east);
@@ -4246,7 +4248,7 @@ app.get('/api/map/shops', optionalAuth, async (req, res) => {
     if (shop_type) {
       paramCount++;
       whereConditions.push(`shop_type = $${paramCount}`);
-      queryParams.push(shop_type);
+      queryParams.push(shop_type as any);
     }
 
     let shopQuery = `
@@ -4284,7 +4286,7 @@ app.get('/api/map/shops', optionalAuth, async (req, res) => {
     const clusters = [];
     const shops = result.rows;
 
-    if (parseInt(zoom) < 13) {
+    if (parseInt(zoom as any) < 13) {
       // Perform basic clustering for lower zoom levels
       const clusterRadius = 0.01; // Roughly 1km at equator
       const processed = new Set();
@@ -4362,10 +4364,10 @@ async function optimizeTripRoute(bomItems, shopIds, startLocation, returnToStart
     const mockShop = {
       id: shopId,
       name: `Shop ${i + 1}`,
-      location_lat: 25.2 + (i * 0.05),
-      location_lng: 55.3 + (i * 0.05),
+      location_lat: (25.2 + (i * 0.05)),
+      location_lng: (55.3 + (i * 0.05)),
       verified: true,
-      rating_average: 4.2 + (i * 0.1)
+      rating_average: (4.2 + (i * 0.1))
     };
 
     const mockItems = bomItems.slice(
@@ -4373,9 +4375,36 @@ async function optimizeTripRoute(bomItems, shopIds, startLocation, returnToStart
       Math.floor((i + 1) * bomItems.length / shopIds.length)
     );
 
-    const stopDistance = i === 0 ? 8.5 : 6.2 + (i * 2.1);
+    const stopDistance = i === 0 ? 8.5 : (6.2 + (i * 2.1));
     const stopDuration = 45 + (mockItems.length * 5);
     const stopCost = mockItems.reduce((sum, item) => sum + (item.quantity * 25.5), 0);
 
     mockRoute.stops.push({
       shop: mockShop,
+      items: mockItems,
+      distance_from_previous_km: stopDistance,
+      estimated_duration_minutes: stopDuration,
+      estimated_cost: stopCost
+    });
+
+    mockRoute.total_distance_km += stopDistance;
+    mockRoute.estimated_duration_minutes += stopDuration;
+  }
+
+  if (returnToStart) {
+    mockRoute.total_distance_km += 5.3;
+    mockRoute.estimated_duration_minutes += 25;
+  }
+
+  return mockRoute;
+}
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+export { app, pool };
+export default app;
