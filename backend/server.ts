@@ -4088,7 +4088,7 @@ app.get('/api/search', optionalAuth, async (req, res) => {
     }
 
     res.json({
-      results: type === 'all' ? results : results[type] || [],
+      results: type === 'all' ? results : results[type as string] || [],
       total_count: totalCount,
       suggestions: [...new Set(suggestions)].slice(0, 5)
     });
