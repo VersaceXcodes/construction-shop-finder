@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import api from '@/lib/axios';
 import { io, Socket } from 'socket.io-client';
 
 // ================================
@@ -283,11 +283,7 @@ export const useAppStore = create<AppStore>()(
         }));
 
         try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/login`,
-            { email, password },
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+          const response = await api.post('/api/auth/login', { email, password });
 
           const { user, token } = response.data;
 
@@ -336,20 +332,16 @@ export const useAppStore = create<AppStore>()(
         }));
 
         try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/register`,
-            {
-              email: userData.email,
-              password_hash: userData.password,
-              name: userData.name,
-              user_type: userData.user_type,
-              phone: userData.phone || null,
-              location_lat: userData.location_lat || null,
-              location_lng: userData.location_lng || null,
-              address: userData.address || null,
-            },
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+          const response = await api.post('/api/auth/register', {
+            email: userData.email,
+            password_hash: userData.password,
+            name: userData.name,
+            user_type: userData.user_type,
+            phone: userData.phone || null,
+            location_lat: userData.location_lat || null,
+            location_lng: userData.location_lng || null,
+            address: userData.address || null,
+          });
 
           const { user, token } = response.data;
 
@@ -390,11 +382,7 @@ export const useAppStore = create<AppStore>()(
         
         try {
           if (auth_token) {
-            await axios.post(
-              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/logout`,
-              {},
-              { headers: { Authorization: `Bearer ${auth_token}` } }
-            );
+            await api.post('/api/auth/logout', {});
           }
         } catch (error) {
           console.warn('Logout API call failed:', error);
@@ -455,10 +443,7 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/auth/me`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
+          const response = await api.get('/api/auth/me');
 
           const user = response.data;
           
@@ -523,11 +508,7 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms`,
-            bomData,
-            { headers: { Authorization: `Bearer ${auth_token}` } }
-          );
+          const response = await api.post('/api/boms', bomData);
 
           const bom = response.data;
 
@@ -554,10 +535,7 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${bom_id}`,
-            { headers: { Authorization: `Bearer ${auth_token}` } }
-          );
+          const response = await api.get(`/api/boms/${bom_id}`);
 
           const bom = response.data;
 
@@ -585,11 +563,7 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${current_bom.id}`,
-            bomData,
-            { headers: { Authorization: `Bearer ${auth_token}` } }
-          );
+          const response = await api.put(`/api/boms/${current_bom.id}`, bomData);
 
           const updatedBom = response.data;
 
@@ -616,17 +590,13 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${current_bom.id}/items`,
-            {
-              variant_id: itemData.variant_id,
-              quantity: itemData.quantity,
-              unit: itemData.unit,
-              waste_factor: itemData.waste_factor || 0,
-              notes: itemData.notes || null,
-            },
-            { headers: { Authorization: `Bearer ${auth_token}` } }
-          );
+          const response = await api.post(`/api/boms/${current_bom.id}/items`, {
+            variant_id: itemData.variant_id,
+            quantity: itemData.quantity,
+            unit: itemData.unit,
+            waste_factor: itemData.waste_factor || 0,
+            notes: itemData.notes || null,
+          });
 
           const newItem = response.data;
 
@@ -652,10 +622,7 @@ export const useAppStore = create<AppStore>()(
         }
 
         try {
-          await axios.delete(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${current_bom.id}/items/${item_id}`,
-            { headers: { Authorization: `Bearer ${auth_token}` } }
-          );
+          await api.delete(`/api/boms/${current_bom.id}/items/${item_id}`);
 
           set((state) => ({
             current_bom: {
@@ -766,16 +733,12 @@ export const useAppStore = create<AppStore>()(
         // Update user preferences on server if authenticated
         if (auth_token && current_user) {
           try {
-            await axios.put(
-              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/users/${current_user.id}`,
-              {
-                preferences: {
-                  ...current_user.preferences,
-                  language,
-                },
+            await api.put(`/api/users/${current_user.id}`, {
+              preferences: {
+                ...current_user.preferences,
+                language,
               },
-              { headers: { Authorization: `Bearer ${auth_token}` } }
-            );
+            });
           } catch (error) {
             console.warn('Failed to update language preference on server:', error);
           }
@@ -795,16 +758,12 @@ export const useAppStore = create<AppStore>()(
         // Update user preferences on server if authenticated
         if (auth_token && current_user) {
           try {
-            await axios.put(
-              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/users/${current_user.id}`,
-              {
-                preferences: {
-                  ...current_user.preferences,
-                  currency,
-                },
+            await api.put(`/api/users/${current_user.id}`, {
+              preferences: {
+                ...current_user.preferences,
+                currency,
               },
-              { headers: { Authorization: `Bearer ${auth_token}` } }
-            );
+            });
           } catch (error) {
             console.warn('Failed to update currency preference on server:', error);
           }

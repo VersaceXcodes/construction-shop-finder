@@ -37,45 +37,136 @@ const __dirname = path.dirname(__filename);
 // Database configuration
 const { DATABASE_URL, PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT = 5432, JWT_SECRET = 'your-secret-key' } = process.env;
 
-const pool = new Pool(
-  DATABASE_URL
-    ? { 
-        connectionString: DATABASE_URL, 
-        ssl: { rejectUnauthorized: false } as any
-      }
-    : {
-        host: PGHOST,
-        database: PGDATABASE,
-        user: PGUSER,
-        password: PGPASSWORD,
-        port: Number(PGPORT),
-        ssl: { rejectUnauthorized: false } as any,
-      }
-);
+// Enhanced database configuration with better error handling
+const dbConfig = DATABASE_URL
+  ? { 
+      connectionString: DATABASE_URL, 
+      ssl: process.env.NODE_ENV === 'production' 
+        ? { rejectUnauthorized: false } 
+        : false,
+      max: 20, // Maximum number of clients in the pool
+      idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+      connectionTimeoutMillis: 5000, // Return an error after 5 seconds if connection could not be established
+      maxUses: 7500, // Close (and replace) a connection after it has been used 7500 times
+    }
+  : {
+      host: PGHOST,
+      database: PGDATABASE,
+      user: PGUSER,
+      password: PGPASSWORD,
+      port: Number(PGPORT),
+      ssl: process.env.NODE_ENV === 'production' 
+        ? { rejectUnauthorized: false } 
+        : false,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+      maxUses: 7500,
+    };
+
+console.log('Database config:', {
+  ...dbConfig,
+  connectionString: dbConfig.connectionString ? '[REDACTED]' : undefined
+});
+
+const pool = new Pool(dbConfig);
 
 // Express app setup
 const app = express();
 const httpServer = createServer(app);
+
+// Enhanced CORS configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()),
+  'http://localhost:5173', // Vite dev server
+  'http://localhost:3000', // Alternative dev port
+  'https://123construction-shop-finder.launchpulse.ai' // Production URL
+].flat().filter(Boolean);
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "*",
-    methods: ["GET", "POST"]
-  }
+    origin: allowedOrigins.length > 0 ? allowedOrigins : "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling'],
+  allowEIO3: true
 });
 
 const port = process.env.PORT || 3000;
 
-// Middleware
+console.log('Allowed CORS origins:', allowedOrigins);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+      return callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      return callback(new Error('Not allowed by CORS'), false);
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 }));
 
-app.use(express.json({ limit: "10mb" }));
+// Additional preflight handling for complex requests
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
+// Enhanced JSON parsing with error handling
+app.use(express.json({ 
+  limit: "10mb"
+}));
+
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Morgan logging middleware
-app.use(morgan('combined'));
+// Global error handler for JSON parsing errors
+app.use((err: any, req: any, res: any, next: any) => {
+  if (err instanceof SyntaxError && (err as any).status === 400 && 'body' in err) {
+    console.error('JSON parsing error:', err);
+    return res.status(400).json(createErrorResponse('Invalid JSON format', null, 'INVALID_JSON'));
+  }
+  next();
+});
+
+// Enhanced logging middleware
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
+}
+
+// Request logging for debugging
+app.use((req, res, next) => {
+  const start = Date.now();
+  
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
+    
+    // Log slow requests
+    if (duration > 5000) {
+      console.warn(`⚠️  Slow request detected: ${req.method} ${req.originalUrl} took ${duration}ms`);
+    }
+  });
+  
+  next();
+});
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -4399,18 +4490,103 @@ async function optimizeTripRoute(bomItems, shopIds, startLocation, returnToStart
   return mockRoute;
 }
 
+// Global error handler for all routes
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  
+  // Prevent hanging requests
+  if (!res.headersSent) {
+    res.status(500).json(createErrorResponse(
+      'Internal server error',
+      process.env.NODE_ENV === 'development' ? err : null,
+      'INTERNAL_SERVER_ERROR'
+    ));
+  }
+});
+
+// Catch-all route handler
 app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api') && !req.path.startsWith('/assets')) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  } else {
-    res.status(404).json(createErrorResponse('Not found', null, 'NOT_FOUND'));
+  try {
+    if (!req.path.startsWith('/api') && !req.path.startsWith('/assets')) {
+      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    } else {
+      res.status(404).json(createErrorResponse('Not found', null, 'NOT_FOUND'));
+    }
+  } catch (error) {
+    console.error('Static file serving error:', error);
+    res.status(500).json(createErrorResponse('Server error', null, 'STATIC_FILE_ERROR'));
+  }
+});
+
+// Add error handling for database connection
+pool.on('error', (err) => {
+  console.error('Database pool error:', err);
+});
+
+// Test database connection on startup
+async function testDatabaseConnection() {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    console.log('Database connection successful:', result.rows[0]);
+    return true;
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    return false;
+  }
+}
+
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+  } catch (error) {
+    res.status(503).json({ 
+      status: 'unhealthy', 
+      error: 'Database connection failed',
+      timestamp: new Date().toISOString() 
+    });
   }
 });
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  const PORT = parseInt(process.env.PORT || '3000'); // Changed from 5000 to 3000 to match .env
+  
+  // Test database connection before starting server
+  testDatabaseConnection().then((connected) => {
+    if (!connected) {
+      console.error('Failed to connect to database. Server will still start but may not function properly.');
+    }
+    
+    const server = httpServer.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'Not set'}`);
+      console.log(`Database URL: ${process.env.DATABASE_URL ? 'Set' : 'Not set'}`);
+    });
+
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully');
+      server.close(() => {
+        console.log('HTTP server closed');
+        pool.end(() => {
+          console.log('Database pool closed');
+          process.exit(0);
+        });
+      });
+    });
+
+    process.on('SIGINT', () => {
+      console.log('SIGINT received, shutting down gracefully');
+      server.close(() => {
+        console.log('HTTP server closed');
+        pool.end(() => {
+          console.log('Database pool closed');
+          process.exit(0);
+        });
+      });
+    });
   });
 }
 
