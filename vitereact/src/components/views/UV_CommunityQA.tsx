@@ -231,8 +231,7 @@ const UV_CommunityQA: React.FC = () => {
   // Load answers when question is selected
   useEffect(() => {
     if (selectedQuestion) {
-      const answers = answers.filter(a => a.question_id === selectedQuestion.id);
-      setQuestionAnswers(answers);
+      setQuestionAnswers([]);
     }
   }, [selectedQuestion]);
 
