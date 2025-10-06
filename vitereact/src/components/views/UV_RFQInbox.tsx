@@ -692,7 +692,7 @@ const UV_RFQInbox: React.FC = () => {
                             <div>Stock</div>
                           </div>
                           
-                          {selectedRFQ.bom.items.map((item: BOMItem, index: number) => {
+                          {selectedRFQ.bom.items.map((item: BOMItem) => {
                             const lineItem = quoteData.line_items.find(li => li.variant_id === item.variant_id);
                             const inventory = inventoryData?.[item.variant_id];
                             
@@ -996,7 +996,7 @@ const UV_RFQInbox: React.FC = () => {
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-200 text-gray-900'
                           }`}>
-                            {!message?.sender_id === currentUser?.id && (
+                            {message?.sender_id !== currentUser?.id && (
                               <div className="text-xs opacity-75 mb-1">
                                 {message.sender.name}
                                 {message.sender.shop_name && ` (${message.sender.shop_name})`}

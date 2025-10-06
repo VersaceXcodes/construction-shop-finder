@@ -111,11 +111,7 @@ interface ManualEntryMode {
   entry_method: string;
 }
 
-interface GalleryImportState {
-  importing: boolean;
-  selected_image: string | null;
-  processing: boolean;
-}
+
 
 const UV_BarcodeScanner: React.FC = () => {
   const [searchParams] = useSearchParams();

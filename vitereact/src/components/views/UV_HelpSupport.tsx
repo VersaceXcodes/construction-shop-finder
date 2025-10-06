@@ -410,9 +410,9 @@ const UV_HelpSupport: React.FC = () => {
   });
 
   const rateHelpfulnessMutation = useMutation({
-    mutationFn: async ({ articleId, helpful }: { articleId: string; helpful: boolean }) => {
+    mutationFn: async ({ helpful }: { articleId: string; helpful: boolean }) => {
       await new Promise(resolve => setTimeout(resolve, 300));
-      return { success: true };
+      return { success: true, helpful };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help-articles'] });

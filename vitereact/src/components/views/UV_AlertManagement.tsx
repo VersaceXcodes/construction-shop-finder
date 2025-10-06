@@ -785,11 +785,8 @@ const UV_AlertManagement: React.FC = () => {
                         onFocus={() => setShowProductSearch(true)}
                         className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       />
-                      {showProductSearch && (productSearchResults.length > 0 || searchLoading) && (
+                      {showProductSearch && productSearchResults.length > 0 && (
                         <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-lg py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                          {searchLoading && (
-                            <div className="px-4 py-2 text-sm text-gray-500">Searching...</div>
-                          )}
                           {productSearchResults.map((variant) => (
                             <button
                               key={variant.id}

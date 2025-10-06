@@ -135,7 +135,10 @@ const UV_SavedSearches: React.FC = () => {
 
   // Mutations
   useMutation({
-    mutationFn: executeSearch
+    mutationFn: async (searchData: SavedSearch) => {
+      await executeSearch(searchData);
+      return searchData;
+    }
   });
 
   const createAlertMutation = useMutation({

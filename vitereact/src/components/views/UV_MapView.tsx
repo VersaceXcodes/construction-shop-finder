@@ -293,7 +293,7 @@ const UV_MapView: React.FC = () => {
   }, [mapData?.shops, mapFilters.verified_only]);
 
   // Render shop marker
-  const renderShopMarker = (shop: Shop, index: number) => {
+  const renderShopMarker = (shop: Shop) => {
     const isSelected = selectedShop?.id === shop.id;
     const isInRoute = routePlanningMode.selected_shops.includes(shop.id);
     
@@ -583,7 +583,7 @@ const UV_MapView: React.FC = () => {
 
               {/* Shop markers */}
               {mapZoomLevel >= 13 
-                ? filteredShops.map((shop, shopIndex) => renderShopMarker(shop, shopIndex))
+                ? filteredShops.map((shop) => renderShopMarker(shop))
                 : mapData?.clusters?.map((cluster, clusterIndex) => renderClusterMarker(cluster, clusterIndex))
               }
             </div>

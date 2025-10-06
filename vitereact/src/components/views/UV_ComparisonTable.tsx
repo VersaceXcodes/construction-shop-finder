@@ -579,11 +579,11 @@ const UV_ComparisonTable: React.FC = () => {
                                     : 'text-gray-400 hover:text-gray-600'
                                 }`}
                               >
-                                {pinnedShops.includes(shop.id) ? (
-                                  <PinIconSolid className="h-4 w-4" />
-                                ) : (
-                                  <span className="h-4 w-4" />
-                                )}
+                              {pinnedShops.includes(shop.id) ? (
+                                <span className="h-4 w-4">📌</span>
+                              ) : (
+                                <span className="h-4 w-4" />
+                              )}
                               </button>
                               <div>
                                 <div className="font-medium text-gray-900">{shop.name}</div>
@@ -831,7 +831,7 @@ const UV_ComparisonTable: React.FC = () => {
                                       }`}
                                     >
                                       {pinnedShops.includes(shopPrice.shop.id) ? (
-                                        <PinIconSolid className="h-4 w-4" />
+                                        <span className="h-4 w-4">📌</span>
                                       ) : (
                                         <span className="h-4 w-4" />
                                       )}

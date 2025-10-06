@@ -155,21 +155,12 @@ const UV_TripPlanner: React.FC = () => {
   const addShop = (shop: Shop) => {
     if (!selectedShops.find(s => s.id === shop.id)) {
       setSelectedShops(prev => [...prev, shop]);
-      setCashDistribution(prev => ({
-        ...prev,
-        [shop.id]: { cash: 0, credit: 0 }
-      }));
     }
     setShowShopSelector(false);
   };
 
   const removeShop = (shopId: string) => {
     setSelectedShops(prev => prev.filter(s => s.id !== shopId));
-    setCashDistribution(prev => {
-      const newDist = { ...prev };
-      delete newDist[shopId];
-      return newDist;
-    });
   };
 
   // Handle route optimization

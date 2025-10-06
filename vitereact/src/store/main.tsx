@@ -291,7 +291,7 @@ export const useAppStore = create<AppStore>()(
 
           const { user, token } = response.data;
 
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: user,
               auth_token: token,
@@ -308,7 +308,7 @@ export const useAppStore = create<AppStore>()(
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.message || 'Login failed';
           
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: null,
               auth_token: null,
@@ -353,7 +353,7 @@ export const useAppStore = create<AppStore>()(
 
           const { user, token } = response.data;
 
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: user,
               auth_token: token,
@@ -370,7 +370,7 @@ export const useAppStore = create<AppStore>()(
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
           
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: null,
               auth_token: null,
@@ -404,7 +404,7 @@ export const useAppStore = create<AppStore>()(
         get().disconnect_websocket();
 
         // Clear all state
-        set((state) => ({
+        set(() => ({
           authentication_state: {
             current_user: null,
             auth_token: null,
@@ -462,7 +462,7 @@ export const useAppStore = create<AppStore>()(
 
           const user = response.data;
           
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: user,
               auth_token: token,
@@ -478,7 +478,7 @@ export const useAppStore = create<AppStore>()(
           get().connect_websocket();
         } catch (error) {
           // Token is invalid, clear auth state
-          set((state) => ({
+          set(() => ({
             authentication_state: {
               current_user: null,
               auth_token: null,
@@ -531,7 +531,7 @@ export const useAppStore = create<AppStore>()(
 
           const bom = response.data;
 
-          set((state) => ({
+          set(() => ({
             current_bom: {
               id: bom.id,
               title: bom.title,
@@ -561,7 +561,7 @@ export const useAppStore = create<AppStore>()(
 
           const bom = response.data;
 
-          set((state) => ({
+          set(() => ({
             current_bom: {
               id: bom.id,
               title: bom.title,
@@ -671,7 +671,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       clear_current_bom: () => {
-        set((state) => ({
+        set(() => ({
           current_bom: {
             id: null,
             title: null,
@@ -708,7 +708,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       clear_comparison: () => {
-        set((state) => ({
+        set(() => ({
           active_comparison: {
             product_ids: [],
             shop_ids: [],
@@ -731,7 +731,7 @@ export const useAppStore = create<AppStore>()(
       // Location Actions
       // ================================
       update_user_location: (location) => {
-        set((state) => ({
+        set(() => ({
           user_location: {
             coordinates: location.coordinates,
             address: location.address || null,
@@ -741,7 +741,7 @@ export const useAppStore = create<AppStore>()(
       },
 
       clear_user_location: () => {
-        set((state) => ({
+        set(() => ({
           user_location: {
             coordinates: null,
             address: null,
@@ -939,10 +939,12 @@ export const useAppStore = create<AppStore>()(
             },
           }));
         } catch (error: any) {
-          set((state) => ({
+          set(() => ({
             websocket_state: {
-              ...state.websocket_state,
+              socket: null,
+              is_connected: false,
               connection_error: error.message,
+              reconnect_attempts: 0,
             },
           }));
         }
@@ -955,7 +957,7 @@ export const useAppStore = create<AppStore>()(
           websocket_state.socket.disconnect();
         }
 
-        set((state) => ({
+        set(() => ({
           websocket_state: {
             socket: null,
             is_connected: false,
@@ -965,7 +967,7 @@ export const useAppStore = create<AppStore>()(
         }));
       },
 
-      handle_price_alert: (_alertData: any) => {
+      handle_price_alert: () => {
         // Update notification count for price alerts
         set((state) => ({
           notification_state: {
@@ -976,12 +978,11 @@ export const useAppStore = create<AppStore>()(
         }));
       },
 
-      handle_stock_update: (_stockData: any) => {
+      handle_stock_update: () => {
         // Handle stock status changes - could trigger notifications or update comparison data
-        console.log('Stock update received:', _stockData);
       },
 
-      handle_rfq_message: (_messageData: any) => {
+      handle_rfq_message: () => {
         // Update notification count for RFQ messages
         set((state) => ({
           notification_state: {
@@ -992,9 +993,8 @@ export const useAppStore = create<AppStore>()(
         }));
       },
 
-      handle_rfq_status_change: (statusData: any) => {
+      handle_rfq_status_change: () => {
         // Handle RFQ status changes
-        console.log('RFQ status changed:', statusData);
       },
     }),
     {

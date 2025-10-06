@@ -194,7 +194,7 @@ const UV_CategoryBrowser: React.FC = () => {
           return null;
         };
         
-        current = current.parent_id ? findInHierarchy(allCategories, current.parent_id) : null;
+        current = (current.parent_id ? findInHierarchy(allCategories, current.parent_id) : null) as Category;
       }
       
       return breadcrumbs;
