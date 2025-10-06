@@ -145,12 +145,12 @@ const UV_ShopAnalytics: React.FC = () => {
 
   const rfqAnalytics = useMemo((): RFQAnalyticsData => {
     if (!rfqData?.rfqs) {
-    return {
-      total_rfqs: rfqs.length,
-      response_rate: 0,
-      conversion_rate: 0,
-      avg_response_time: 0,
-      win_rate: 0
+      return {
+        total_rfqs: 0,
+        response_rate: 0,
+        conversion_rate: 0,
+        avg_response_time: 0,
+        win_rate: 0
       };
     }
 
