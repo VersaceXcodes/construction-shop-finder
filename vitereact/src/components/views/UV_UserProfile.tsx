@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
 import axios from 'axios';
-import { User, Camera, MapPin, Bell, Shield, Settings, Save, Edit3, X, Check, Upload } from 'lucide-react';
+import { User, Camera, MapPin, Bell, Shield, Settings, Save, Edit3, X, Check } from 'lucide-react';
 
 // Types for API responses and requests
 interface UpdateUserProfileRequest {

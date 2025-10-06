@@ -195,7 +195,7 @@ const UV_OrderHistory: React.FC = () => {
   }, [ordersData?.orders, searchQuery]);
 
   // Calculate pagination
-  const totalPages = ordersData ? Math.ceil(ordersData.total / itemsPerPage) : 0;
+  // const totalPages = ordersData ? Math.ceil(ordersData.total / itemsPerPage) : 0;
 
   // Status color mapping
   const getStatusColor = (status: string) => {

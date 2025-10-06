@@ -7,7 +7,6 @@ import {
   ShoppingCartIcon, 
   DocumentPlusIcon, 
   ArrowPathIcon,
-  PinIcon,
   ChartBarIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
@@ -114,7 +113,7 @@ interface ComparisonResponse {
 }
 
 const UV_ComparisonTable: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   // Global state (individual selectors to avoid infinite loops)
@@ -122,7 +121,7 @@ const UV_ComparisonTable: React.FC = () => {
   const authToken = useAppStore(state => state.authentication_state.auth_token);
   const currentBOM = useAppStore(state => state.current_bom);
   const userLocation = useAppStore(state => state.user_location);
-  const addToBOMAction = useAppStore(state => state.add_bom_item);
+  // const addToBOMAction = useAppStore(state => state.add_bom_item);
 
   // Local state
   const [comparisonVariants, setComparisonVariants] = useState<string[]>([]);
@@ -445,7 +444,7 @@ const UV_ComparisonTable: React.FC = () => {
                 </button>
                 
                 <button
-                  onClick={refetch}
+                  onClick={() => refetch()}
                   disabled={isLoading}
                   className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                 >
@@ -585,7 +584,7 @@ const UV_ComparisonTable: React.FC = () => {
                                 {pinnedShops.includes(shop.id) ? (
                                   <PinIconSolid className="h-4 w-4" />
                                 ) : (
-                                  <PinIcon className="h-4 w-4" />
+                                  <span className="h-4 w-4" />
                                 )}
                               </button>
                               <div>
@@ -836,7 +835,7 @@ const UV_ComparisonTable: React.FC = () => {
                                       {pinnedShops.includes(shopPrice.shop.id) ? (
                                         <PinIconSolid className="h-4 w-4" />
                                       ) : (
-                                        <PinIcon className="h-4 w-4" />
+                                        <span className="h-4 w-4" />
                                       )}
                                     </button>
                                   </div>

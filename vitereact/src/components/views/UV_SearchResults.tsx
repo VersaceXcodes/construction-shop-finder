@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Search, Filter, Grid, List, MapPin, ShoppingCart, BarChart3, Heart, Plus, Minus, Eye, Star, Clock, Package, AlertCircle, Loader2, X } from 'lucide-react';
+import { Search, Filter, Grid, List, MapPin, ShoppingCart, BarChart3, Plus, Minus, Eye, Star, Package, AlertCircle, Loader2, X } from 'lucide-react';
 
 // Types and interfaces
 interface ProductVariant {
@@ -76,11 +76,11 @@ const UV_SearchResults: React.FC = () => {
   const [localQuery, setLocalQuery] = useState('');
 
   // Zustand store access with individual selectors
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const userLocation = useAppStore(state => state.user_location);
   const currency = useAppStore(state => state.app_preferences.currency);
-  const language = useAppStore(state => state.app_preferences.language);
+  // const language = useAppStore(state => state.app_preferences.language);
   const comparisonProductIds = useAppStore(state => state.active_comparison.product_ids);
   const currentBOM = useAppStore(state => state.current_bom);
   const addToComparison = useAppStore(state => state.add_to_comparison);

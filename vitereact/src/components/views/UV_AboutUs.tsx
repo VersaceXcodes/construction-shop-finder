@@ -26,7 +26,7 @@ interface CompanyStats {
 
 const UV_AboutUs: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Global state access (individual selectors to avoid infinite loops)
   const currentUser = useAppStore(state => state.authentication_state.current_user);
@@ -35,7 +35,7 @@ const UV_AboutUs: React.FC = () => {
 
   // Local state
   const [currentSection, setCurrentSection] = useState<string | null>(searchParams.get('section'));
-  const [contentLanguage, setContentLanguage] = useState<string>(searchParams.get('lang') || appLanguage || 'en');
+  const [contentLanguage] = useState<string>(searchParams.get('lang') || appLanguage || 'en');
   const [contactFormData, setContactFormData] = useState<ContactFormData>({
     name: currentUser?.name || '',
     email: currentUser?.email || '',

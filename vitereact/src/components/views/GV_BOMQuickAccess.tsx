@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
@@ -79,8 +79,6 @@ const GV_BOMQuickAccess: React.FC = () => {
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   
   // Global actions
-  const addBOMItem = useAppStore(state => state.add_bom_item);
-  const removeBOMItem = useAppStore(state => state.remove_bom_item);
   const createBOM = useAppStore(state => state.create_bom);
 
   const queryClient = useQueryClient();
@@ -110,59 +108,7 @@ const GV_BOMQuickAccess: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Add item mutation
-  const addItemMutation = useMutation<BOMUpdateResponse, Error, { variant_id: string; quantity: number; unit: string }>({
-    mutationFn: async ({ variant_id, quantity, unit }) => {
-      if (!currentBOM.id || !authToken) {
-        throw new Error('BOM ID and authentication required');
-      }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${currentBOM.id}/items`,
-        {
-          variant_id,
-          quantity,
-          unit,
-          waste_factor: 0
-        },
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      // Update global state
-      if (data.item) {
-        const updatedItems = [...currentBOM.items, {
-          id: data.item.id,
-          bom_id: currentBOM.id!,
-          variant_id: data.item.variant_id,
-          quantity: data.item.quantity,
-          unit: data.item.unit,
-          waste_factor: 0,
-          total_quantity_needed: data.item.total_quantity_needed,
-          estimated_price_per_unit: null,
-          total_estimated_cost: null,
-          notes: null,
-          sort_order: currentBOM.items.length,
-          created_at: data.item.created_at,
-          updated_at: data.item.updated_at
-        }];
-
-        useAppStore.setState(state => ({
-          current_bom: {
-            ...state.current_bom,
-            items: updatedItems,
-            item_count: state.current_bom.item_count + 1,
-            total_cost: data.updated_total_cost,
-            last_updated: new Date(data.updated_at).toISOString()
-          }
-        }));
-      }
-      
-      // Invalidate cost analysis
-      queryClient.invalidateQueries({ queryKey: ['bom-cost-analysis'] });
-    },
-  });
 
   // Remove last item mutation
   const removeLastItemMutation = useMutation<BOMUpdateResponse, Error>({
@@ -210,13 +156,6 @@ const GV_BOMQuickAccess: React.FC = () => {
       });
     },
   });
-
-  // Handle add current product (placeholder - would need product context)
-  const handleAddCurrentProduct = () => {
-    // This would typically get current product from context/URL
-    // For now, we'll show a simple message
-    console.log('Add current product functionality - would need product context');
-  };
 
   // Handle remove last item
   const handleRemoveLastItem = () => {
@@ -297,7 +236,7 @@ const GV_BOMQuickAccess: React.FC = () => {
             {/* Recent Items */}
             {currentBOM.items.length > 0 ? (
               <div className="space-y-2 mb-3 max-h-32 overflow-y-auto">
-                {currentBOM.items.slice(-3).map((item, index) => (
+                {currentBOM.items.slice(-3).map((item) => (
                   <div key={item.id} className="flex items-center justify-between text-xs bg-gray-50 rounded p-2">
                     <div className="flex-1 min-w-0">
                       <p className="text-gray-900 truncate">Item {item.variant_id.slice(-6)}</p>

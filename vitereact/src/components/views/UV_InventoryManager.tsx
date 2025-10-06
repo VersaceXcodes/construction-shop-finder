@@ -181,9 +181,9 @@ const UV_InventoryManager: React.FC = () => {
     queryFn: async () => {
       if (!inventoryData?.inventory.length) return { comparison: [] };
       
-      const variantIds = inventoryData.inventory.map(item => item.variant_id).join(',');
+      const variant_ids = inventoryData.inventory.map(item => item.variant_id).join(',');
       const params = new URLSearchParams({
-        variant_ids: variantIds,
+        variant_ids: variant_ids,
         location_lat: currentUser?.location_lat?.toString() || '25.2048',
         location_lng: currentUser?.location_lng?.toString() || '55.2708'
       });
@@ -202,9 +202,9 @@ const UV_InventoryManager: React.FC = () => {
 
   // Update inventory mutation
   const updateInventoryMutation = useMutation({
-    mutationFn: async ({ variantId, data }: { variantId: string; data: Partial<InventoryItem> }) => {
+    mutationFn: async ({ variantId: variant_id, data }: { variantId: string; data: Partial<InventoryItem> }) => {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/inventory/${shopId}/${variantId}`,
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/inventory/${shopId}/${variant_id}`,
         data,
         {
           headers: { Authorization: `Bearer ${authToken}` }
@@ -241,9 +241,9 @@ const UV_InventoryManager: React.FC = () => {
 
   // Remove inventory item mutation
   const removeInventoryMutation = useMutation({
-    mutationFn: async (variantId: string) => {
+    mutationFn: async (variant_id: string) => {
       await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/inventory/${shopId}/${variantId}`,
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/inventory/${shopId}/${variant_id}`,
         {
           headers: { Authorization: `Bearer ${authToken}` }
         }
@@ -251,7 +251,7 @@ const UV_InventoryManager: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shop-inventory', shopId] });
-      setSelectedItems(prev => prev.filter(id => !prev.includes(variantId)));
+      setSelectedItems(prev => prev.filter(id => !prev.includes(_variant_id)));
     },
   });
 
@@ -289,11 +289,11 @@ const UV_InventoryManager: React.FC = () => {
   }, [competitionData]);
 
   // Handlers
-  const handleSelectItem = useCallback((variantId: string) => {
+  const handleSelectItem = useCallback((variant_id: string) => {
     setSelectedItems(prev => 
-      prev.includes(variantId) 
-        ? prev.filter(id => id !== variantId)
-        : [...prev, variantId]
+      prev.includes(variant_id) 
+        ? prev.filter(id => id !== variant_id)
+        : [...prev, variant_id]
     );
   }, []);
 
@@ -302,9 +302,9 @@ const UV_InventoryManager: React.FC = () => {
     setSelectedItems(prev => prev.length === allIds.length ? [] : allIds);
   }, [inventoryItems]);
 
-  const handleUpdateStock = useCallback((variantId: string, quantity: number, inStock: boolean) => {
+  const handleUpdateStock = useCallback((variant_id: string, quantity: number, inStock: boolean) => {
     updateInventoryMutation.mutate({
-      variantId,
+      variant_id,
       data: {
         stock_quantity: quantity,
         in_stock: inStock
@@ -322,9 +322,9 @@ const UV_InventoryManager: React.FC = () => {
     });
   }, [updatePriceMutation]);
 
-  const handleRemoveItem = useCallback((variantId: string) => {
+  const handleRemoveItem = useCallback((variant_id: string) => {
     if (window.confirm('Are you sure you want to remove this item from your inventory?')) {
-      removeInventoryMutation.mutate(variantId);
+      removeInventoryMutation.mutate(variant_id);
     }
   }, [removeInventoryMutation]);
 
@@ -332,8 +332,8 @@ const UV_InventoryManager: React.FC = () => {
     if (selectedItems.length === 0) return;
     
     if (window.confirm(`Are you sure you want to remove ${selectedItems.length} items from your inventory?`)) {
-      selectedItems.forEach(variantId => {
-        removeInventoryMutation.mutate(variantId);
+      selectedItems.forEach(variant_id => {
+        removeInventoryMutation.mutate(variant_id);
       });
     }
   }, [selectedItems, removeInventoryMutation]);

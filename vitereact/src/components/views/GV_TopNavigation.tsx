@@ -27,14 +27,12 @@ interface NotificationResponse {
 
 const GV_TopNavigation: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +53,7 @@ const GV_TopNavigation: React.FC = () => {
   const updateLanguage = useAppStore(state => state.update_language);
   
   // Search suggestions query
-  const { data: searchSuggestions, refetch: refetchSuggestions } = useQuery({
+  const { data: searchSuggestions } = useQuery({
     queryKey: ['searchSuggestions', searchQuery],
     queryFn: async () => {
       if (!searchQuery.trim() || searchQuery.length < 2) {
@@ -167,7 +165,6 @@ const GV_TopNavigation: React.FC = () => {
 
   // Calculate notification counts
   const totalNotifications = notificationData?.unread_count || notificationState.unread_count;
-  const priceAlerts = notificationState.price_alerts;
   const rfqMessages = notificationState.rfq_messages;
 
   return (

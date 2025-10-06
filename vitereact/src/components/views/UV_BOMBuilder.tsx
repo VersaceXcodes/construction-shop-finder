@@ -111,12 +111,12 @@ const UV_BOMBuilder: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Zustand store selectors
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.auth_token);
   const userLocation = useAppStore(state => state.user_location);
-  const currentBomState = useAppStore(state => state.current_bom);
-  const loadBom = useAppStore(state => state.load_bom);
-  const createBom = useAppStore(state => state.create_bom);
+  // const currentBomState = useAppStore(state => state.current_bom);
+  // const loadBom = useAppStore(state => state.load_bom);
+  // const createBom = useAppStore(state => state.create_bom);
 
   // Local state
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -124,7 +124,7 @@ const UV_BOMBuilder: React.FC = () => {
   const [showAddItemModal, setShowAddItemModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showCostAnalysis, setShowCostAnalysis] = useState(true);
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  // const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
   // URL parameters
   const template = searchParams.get('template');
@@ -220,30 +220,30 @@ const UV_BOMBuilder: React.FC = () => {
   });
 
   // Add BOM item mutation
-  const addItemMutation = useMutation({
-    mutationFn: async (itemData: {
-      variant_id: string;
-      quantity: number;
-      unit: string;
-      waste_factor?: number;
-      notes?: string;
-    }) => {
-      if (!bomData?.id) throw new Error('No BOM selected');
-      
-      const response = await axios.post(
-        `${apiBaseUrl}/api/boms/${bomData.id}/items`,
-        itemData,
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
-      
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bom', bom_id] });
-      queryClient.invalidateQueries({ queryKey: ['bom-cost-analysis', bomData?.id] });
-      setShowAddItemModal(false);
-    },
-  });
+  // const addItemMutation = useMutation({
+//     mutationFn: async (itemData: {
+//       variant_id: string;
+//       quantity: number;
+//       unit: string;
+//       waste_factor?: number;
+//       notes?: string;
+//     }) => {
+//       if (!bomData?.id) throw new Error('No BOM selected');
+//       
+//       const response = await axios.post(
+//         `${apiBaseUrl}/api/boms/${bomData.id}/items`,
+//         itemData,
+//         { headers: { Authorization: `Bearer ${authToken}` } }
+//       );
+//       
+//       return response.data;
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ['bom', bom_id] });
+//       queryClient.invalidateQueries({ queryKey: ['bom-cost-analysis', bomData?.id] });
+//       setShowAddItemModal(false);
+//     },
+//   });
 
   // Remove BOM item mutation
   const removeItemMutation = useMutation({
@@ -466,7 +466,7 @@ const UV_BOMBuilder: React.FC = () => {
 
                 {bomData.items && bomData.items.length > 0 ? (
                   <div className="divide-y divide-gray-200">
-                    {bomData.items.map((item, index) => (
+                    {bomData.items.map((item) => (
                       <div key={item.id} className="p-6 hover:bg-gray-50">
                         <div className="flex items-start justify-between">
                           <div className="flex-1 min-w-0">
@@ -605,7 +605,7 @@ const UV_BOMBuilder: React.FC = () => {
                       <div>
                         <h4 className="text-sm font-medium text-gray-900 mb-2">Shop Breakdown</h4>
                         <div className="space-y-2">
-                          {costAnalysis.shop_breakdown.slice(0, 3).map((shop, index) => (
+                          {costAnalysis.shop_breakdown.slice(0, 3).map((shop) => (
                             <div key={index} className="flex items-center justify-between text-sm">
                               <div>
                                 <span className="text-gray-900">{shop.shop.name}</span>

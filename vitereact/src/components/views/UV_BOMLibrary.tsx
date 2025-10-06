@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
@@ -62,12 +62,12 @@ interface FilterState {
 
 const UV_BOMLibrary: React.FC = () => {
   // Zustand store access
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.auth_token);
   const currency = useAppStore(state => state.app_preferences.currency);
   const language = useAppStore(state => state.app_preferences.language);
   const loadBom = useAppStore(state => state.load_bom);
-  const createBom = useAppStore(state => state.create_bom);
+  // const createBom = useAppStore(state => state.create_bom);
 
   // Local state
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

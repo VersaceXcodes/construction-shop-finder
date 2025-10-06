@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { FileDownload, ChevronRight, Shield, Eye, Users, Lock, Scale, Globe } from 'lucide-react';
+import { Download, ChevronRight, Shield, Eye, Users, Lock, Scale, Globe } from 'lucide-react';
 import { useAppStore } from '@/store/main';
 
 interface AnalyticsEventPayload {
@@ -13,7 +13,7 @@ interface AnalyticsEventPayload {
 
 const UV_PrivacyPolicy: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
   // Global state access
   const authToken = useAppStore(state => state.authentication_state.auth_token);
@@ -26,7 +26,7 @@ const UV_PrivacyPolicy: React.FC = () => {
   const [contentLanguage, setContentLanguage] = useState<string>(
     searchParams.get('lang') || globalLanguage || 'en'
   );
-  const [pageLoadedAt] = useState<number>(Date.now());
+  // const [pageLoadedAt] = useState<number>(Date.now());
   
   // Analytics tracking mutation
   const trackAnalyticsMutation = useMutation({
@@ -42,7 +42,6 @@ const UV_PrivacyPolicy: React.FC = () => {
         },
         {
           headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-          'Content-Type': 'application/json',
         }
       );
       return response.data;
@@ -186,7 +185,7 @@ const UV_PrivacyPolicy: React.FC = () => {
                     onClick={handleDownloadPolicy}
                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    <FileDownload className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    <Download className="w-4 h-4 mr-2 rtl:mr-0 rtl:ml-2" />
                     {isRTL ? 'تحميل PDF' : 'Download PDF'}
                   </button>
                 </div>

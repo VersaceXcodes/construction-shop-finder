@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '@/store/main';
-import axios from 'axios';
 
 // TypeScript interfaces for the help system
 interface HelpArticle {
@@ -57,17 +56,6 @@ interface ChatMessage {
   timestamp: string;
 }
 
-interface ChatSession {
-  id: string;
-  is_active: boolean;
-  agent_info: {
-    name: string;
-    avatar: string;
-    status: 'online' | 'away' | 'busy';
-  } | null;
-  messages: ChatMessage[];
-  started_at: string;
-}
 
 const UV_HelpSupport: React.FC = () => {
   // Global state

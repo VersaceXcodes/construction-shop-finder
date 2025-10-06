@@ -6,10 +6,6 @@ import { useAppStore } from '@/store/main';
 // Global shared views
 import GV_TopNavigation from '@/components/views/GV_TopNavigation';
 import GV_MobileBottomNav from '@/components/views/GV_MobileBottomNav';
-import GV_SearchBar from '@/components/views/GV_SearchBar';
-import GV_NotificationCenter from '@/components/views/GV_NotificationCenter';
-import GV_UserProfileMenu from '@/components/views/GV_UserProfileMenu';
-import GV_LanguageToggle from '@/components/views/GV_LanguageToggle';
 import GV_BOMQuickAccess from '@/components/views/GV_BOMQuickAccess';
 
 // Unique views

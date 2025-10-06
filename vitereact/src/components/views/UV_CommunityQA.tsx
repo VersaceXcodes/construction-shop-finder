@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '@/store/main';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { 
   MagnifyingGlassIcon, 
   PlusIcon, 
@@ -20,7 +18,7 @@ import {
   PencilIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarIconSolid, CheckIcon as CheckIconSolid } from '@heroicons/react/24/solid';
+import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 
 // Types
 interface Question {
@@ -194,7 +192,7 @@ const mockAnswers: Answer[] = [
 const UV_CommunityQA: React.FC = () => {
   // Global state
   const currentUser = useAppStore(state => state.authentication_state.current_user);
-  const authToken = useAppStore(state => state.authentication_state.auth_token);
+  // const authToken = useAppStore(state => state.authentication_state.auth_token);
 
   // Local state
   const [view, setView] = useState<'list' | 'detail' | 'create'>('list');
@@ -380,7 +378,7 @@ const UV_CommunityQA: React.FC = () => {
     <div className="flex flex-wrap gap-1">
       {isExpert && (
         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-          <CheckIconSolid className="w-3 h-3" />
+          <StarIconSolid className="w-3 h-3" />
           Expert
         </span>
       )}
@@ -570,7 +568,7 @@ const UV_CommunityQA: React.FC = () => {
                                 <UserIcon className="w-4 h-4" />
                                 <span className="font-medium text-gray-700">{question.author.name}</span>
                                 {question.author.is_expert && (
-                                  <CheckIconSolid className="w-4 h-4 text-blue-500" />
+                                  <StarIconSolid className="w-4 h-4 text-blue-500" />
                                 )}
                               </div>
                               <div className="flex items-center gap-1">
@@ -607,7 +605,7 @@ const UV_CommunityQA: React.FC = () => {
                             </div>
                             {question.has_best_answer && (
                               <div className="flex items-center gap-1 text-green-600 text-xs">
-                                <CheckIconSolid className="w-3 h-3" />
+                                <StarIconSolid className="w-3 h-3" />
                                 Solved
                               </div>
                             )}
@@ -637,7 +635,7 @@ const UV_CommunityQA: React.FC = () => {
                           <UserIcon className="w-4 h-4" />
                           <span className="font-medium text-gray-700">{selectedQuestion.author.name}</span>
                           {selectedQuestion.author.is_expert && (
-                            <CheckIconSolid className="w-4 h-4 text-blue-500" />
+                            <StarIconSolid className="w-4 h-4 text-blue-500" />
                           )}
                           <span className="text-gray-400">•</span>
                           <span>{selectedQuestion.author.reputation_score} reputation</span>
@@ -715,7 +713,7 @@ const UV_CommunityQA: React.FC = () => {
                           <div className="flex-1">
                             {answer.is_best_answer && (
                               <div className="flex items-center gap-2 text-green-600 font-medium text-sm mb-3">
-                                <CheckIconSolid className="w-4 h-4" />
+                                <StarIconSolid className="w-4 h-4" />
                                 Best Answer
                               </div>
                             )}
@@ -732,7 +730,7 @@ const UV_CommunityQA: React.FC = () => {
                                   <UserIcon className="w-4 h-4" />
                                   <span className="font-medium text-gray-700">{answer.author.name}</span>
                                   {answer.author.is_expert && (
-                                    <CheckIconSolid className="w-4 h-4 text-blue-500" />
+                                    <StarIconSolid className="w-4 h-4 text-blue-500" />
                                   )}
                                   <span className="text-gray-400">•</span>
                                   <span>{answer.author.reputation_score} reputation</span>

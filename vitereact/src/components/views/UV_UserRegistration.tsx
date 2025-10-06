@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppStore } from '@/store/main';
-import { createUserInputSchema } from '@/lib/zodSchemas';
+import { registrationSchema } from '@/lib/zodSchemas';
 import { z } from 'zod';
 import { 
   UserIcon, 
@@ -89,7 +89,7 @@ const UV_UserRegistration: React.FC = () => {
   // Form validation using Zod
   const validateFormField = (field: string, value: any) => {
     try {
-      const fieldSchema = createUserInputSchema.pick({ [field]: true });
+      const fieldSchema = registrationSchema.pick({ [field]: true });
       fieldSchema.parse({ [field]: value });
       
       setFormValidationErrors(prev => ({
@@ -178,7 +178,7 @@ const UV_UserRegistration: React.FC = () => {
     
     try {
       // Validate entire form
-      createUserInputSchema.parse({
+      registrationSchema.parse({
         email: registrationForm.email,
         password_hash: registrationForm.password,
         name: registrationForm.name,

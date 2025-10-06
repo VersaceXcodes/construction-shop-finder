@@ -6,7 +6,6 @@ import axios from 'axios';
 import { 
   BellIcon, 
   XMarkIcon, 
-  CheckIcon, 
   ClockIcon, 
   ExclamationTriangleIcon,
   ChatBubbleLeftRightIcon,
@@ -148,7 +147,6 @@ interface GV_NotificationCenterProps {
 const GV_NotificationCenter: React.FC<GV_NotificationCenterProps> = ({ isOpen, onClose }) => {
   // Zustand store state (individual selectors to prevent infinite loops)
   const authToken = useAppStore(state => state.authentication_state.auth_token);
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const updateNotificationCounts = useAppStore(state => state.update_notification_counts);
 
@@ -188,7 +186,7 @@ const GV_NotificationCenter: React.FC<GV_NotificationCenterProps> = ({ isOpen, o
 
   const markAllReadMutation = useMutation({
     mutationFn: () => markAllNotificationsRead(authToken!),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       updateNotificationCounts({ unread_count: 0 });
       refetchNotifications();
@@ -298,9 +296,9 @@ const GV_NotificationCenter: React.FC<GV_NotificationCenterProps> = ({ isOpen, o
           <div className="flex items-center space-x-2">
             <BellSolidIcon className="h-5 w-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-            {notificationsData?.unread_count > 0 && (
+            {(notificationsData?.unread_count ?? 0) > 0 && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                {notificationsData.unread_count}
+                {notificationsData?.unread_count ?? 0}
               </span>
             )}
           </div>
@@ -329,11 +327,11 @@ const GV_NotificationCenter: React.FC<GV_NotificationCenterProps> = ({ isOpen, o
         <div className="border-b border-gray-200">
           <nav className="flex space-x-1 p-2" aria-label="Notification filters">
             {[
-              { key: 'all', label: 'All', count: categoryCounts.all },
-              { key: 'alerts', label: 'Alerts', count: categoryCounts.alerts },
-              { key: 'messages', label: 'Messages', count: categoryCounts.messages },
-              { key: 'system', label: 'System', count: categoryCounts.system },
-              { key: 'community', label: 'Community', count: categoryCounts.community }
+              { key: 'all', label: 'All', count: (categoryCounts as any).all ?? 0 },
+              { key: 'alerts', label: 'Alerts', count: (categoryCounts as any).alerts ?? 0 },
+              { key: 'messages', label: 'Messages', count: (categoryCounts as any).messages ?? 0 },
+              { key: 'system', label: 'System', count: (categoryCounts as any).system ?? 0 },
+              { key: 'community', label: 'Community', count: (categoryCounts as any).community ?? 0 }
             ].map((filter) => (
               <button
                 key={filter.key}
@@ -389,7 +387,7 @@ const GV_NotificationCenter: React.FC<GV_NotificationCenterProps> = ({ isOpen, o
                   Mark Read
                 </button>
               )}
-              {notificationsData?.unread_count > 0 && (
+              {(notificationsData?.unread_count ?? 0) > 0 && (
                 <button
                   onClick={() => markAllReadMutation.mutate()}
                   disabled={markAllReadMutation.isPending}

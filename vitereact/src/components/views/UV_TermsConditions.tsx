@@ -3,15 +3,9 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Download, Check, X, Calendar, Clock, FileText, Shield, Cookie, Users, Building, Scale } from 'lucide-react';
+import { Download, Calendar, Check, Clock, FileText, Shield, Cookie, Users, Scale } from 'lucide-react';
 
 // Types and Interfaces
-interface LegalDocument {
-  content: string;
-  version: string;
-  effective_date: string;
-  last_updated: string;
-}
 
 interface CookieCategory {
   id: string;
@@ -41,7 +35,7 @@ const UV_TermsConditions: React.FC = () => {
   const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.auth_token);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
-  const language = useAppStore(state => state.app_preferences.language);
+  // const language = useAppStore(state => state.app_preferences.language);
 
   // Local state
   const [activeTab, setActiveTab] = useState<string>('terms');

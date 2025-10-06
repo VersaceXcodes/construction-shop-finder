@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
 import axios from 'axios';
-import { Clock, MessageCircle, AlertTriangle, CheckCircle, User, Package, MapPin, Calendar, DollarSign, Send, Paperclip, Phone, Mail, Star, Truck, FileText, Edit, Save, X, Filter, Search, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Package2, CheckCircle2, Star, Clock, MessageCircle, AlertTriangle,  MapPin, Calendar, DollarSign, Send, Paperclip, Truck, FileText, Edit, X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 // TypeScript interfaces
 interface RFQ {
@@ -99,13 +99,6 @@ interface LineItem {
   notes: string | null;
 }
 
-interface InventoryItem {
-  variant_id: string;
-  in_stock: boolean;
-  available_quantity: number;
-  lead_time_days: number;
-  unit_price: number;
-}
 
 const UV_RFQInbox: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -207,7 +200,7 @@ const UV_RFQInbox: React.FC = () => {
       return response.data.messages.map((msg: any) => ({
         ...msg,
         sender_name: msg.sender.name,
-        is_from_current_user: msg.sender_id === currentUser?.id
+        is_from_current_user: msg?.sender_id === currentUser?.id
       }));
     },
     enabled: !!authToken && !!selectedRFQId,
@@ -560,7 +553,7 @@ const UV_RFQInbox: React.FC = () => {
                     
                     {rfq.bom && (
                       <div className="flex items-center text-xs text-gray-500 mb-2">
-                        <Package className="w-3 h-3 mr-1" />
+                        <Package2 className="w-3 h-3 mr-1" />
                         {rfq.bom.title} ({rfq.bom.item_count} items)
                       </div>
                     )}
@@ -861,7 +854,7 @@ const UV_RFQInbox: React.FC = () => {
                 {selectedRFQ.bom && !isPreparingQuote && (
                   <div className="p-6 border-b border-gray-200">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      <Package className="w-5 h-5 inline mr-2" />
+                      <Package2 className="w-5 h-5 inline mr-2" />
                       Bill of Materials: {selectedRFQ.bom.title}
                     </h3>
                     
@@ -917,7 +910,7 @@ const UV_RFQInbox: React.FC = () => {
                               <h4 className="font-medium text-gray-900 flex items-center">
                                 {reply.shop.name}
                                 {reply.shop.verified && (
-                                  <CheckCircle className="w-4 h-4 text-green-500 ml-2" />
+                                  <CheckCircle2 className="w-4 h-4 text-green-500 ml-2" />
                                 )}
                               </h4>
                               <div className="flex items-center text-sm text-gray-500 mt-1">
@@ -996,14 +989,14 @@ const UV_RFQInbox: React.FC = () => {
                       messagesData.map((message: RFQMessage) => (
                         <div
                           key={message.id}
-                          className={`flex ${message.is_from_current_user ? 'justify-end' : 'justify-start'}`}
+                          className={`flex ${message?.sender_id === currentUser?.id ? 'justify-end' : 'justify-start'}`}
                         >
                           <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                            message.is_from_current_user
+                            message?.sender_id === currentUser?.id
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-200 text-gray-900'
                           }`}>
-                            {!message.is_from_current_user && (
+                            {!message?.sender_id === currentUser?.id && (
                               <div className="text-xs opacity-75 mb-1">
                                 {message.sender.name}
                                 {message.sender.shop_name && ` (${message.sender.shop_name})`}
@@ -1011,7 +1004,7 @@ const UV_RFQInbox: React.FC = () => {
                             )}
                             <div className="text-sm">{message.message}</div>
                             <div className={`text-xs mt-1 ${
-                              message.is_from_current_user ? 'text-blue-100' : 'text-gray-500'
+                              message?.sender_id === currentUser?.id ? 'text-blue-100' : 'text-gray-500'
                             }`}>
                               {formatDate(message.created_at)}
                             </div>

@@ -73,7 +73,7 @@ const UV_CategoryBrowser: React.FC = () => {
   const navigate = useNavigate();
 
   // Global state - using individual selectors to avoid infinite loops
-  const appPreferences = useAppStore(state => state.app_preferences);
+  // const appPreferences = useAppStore(state => state.app_preferences);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const addToComparison = useAppStore(state => state.add_to_comparison);
   const addBomItem = useAppStore(state => state.add_bom_item);

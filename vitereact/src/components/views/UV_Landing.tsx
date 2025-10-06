@@ -44,7 +44,7 @@ const UV_Landing: React.FC = () => {
 
   // Zustand selectors - individual selectors to avoid infinite loops
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const userLocation = useAppStore(state => state.user_location);
   const language = useAppStore(state => state.app_preferences.language);
 

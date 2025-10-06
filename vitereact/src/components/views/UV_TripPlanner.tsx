@@ -67,7 +67,7 @@ const UV_TripPlanner: React.FC = () => {
   const [searchParams] = useSearchParams();
   
   // Global state access with individual selectors
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const currentBOM = useAppStore(state => state.current_bom);
   const userLocation = useAppStore(state => state.user_location);
   const currency = useAppStore(state => state.app_preferences.currency);
@@ -279,7 +279,7 @@ const UV_TripPlanner: React.FC = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {selectedShops.map((shop, index) => (
+                      {selectedShops.map((shop) => (
                         <div
                           key={shop.id}
                           className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
@@ -385,7 +385,7 @@ const UV_TripPlanner: React.FC = () => {
                     </div>
 
                     <div className="space-y-4">
-                      {routeOptimizationMutation.data.route.stops.map((stop, index) => (
+                      {routeOptimizationMutation.data.route.stops.map((stop) => (
                         <div key={stop.shop.id} className="border border-gray-200 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center space-x-3">

@@ -60,7 +60,7 @@ const UV_SavedSearches: React.FC = () => {
   // Zustand state - individual selectors
   const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.auth_token);
-  const language = useAppStore(state => state.app_preferences.language);
+  // const language = useAppStore(state => state.app_preferences.language);
 
   // Local state
   const [selectedFolder, setSelectedFolder] = useState<string>('all');

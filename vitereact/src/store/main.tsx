@@ -842,13 +842,13 @@ export const useAppStore = create<AppStore>()(
       },
 
       mark_notifications_read: (type?: string) => {
-        set((state) => {
+        set((_state) => {
           if (type) {
             return {
               notification_state: {
-                ...state.notification_state,
+                ...state.notificationstate,
                 [type]: 0,
-                unread_count: Math.max(0, state.notification_state.unread_count - state.notification_state[type as keyof NotificationState] as number),
+                unread_count: Math.max(0, state.notificationstate.unread_count - state.notificationstate[type as keyof NotificationState] as number),
               },
             };
           } else {

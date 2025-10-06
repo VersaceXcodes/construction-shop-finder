@@ -3,24 +3,9 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
 import axios from 'axios';
-import { Star, MapPin, Clock, Truck, Phone, MessageCircle, Plus, Compare, ShoppingCart, Heart, Share2, ChevronLeft, ChevronRight, ExternalLink, AlertCircle, CheckCircle, Zap } from 'lucide-react';
+import { ArrowUpDown, Star, MapPin, Phone, MessageCircle, Plus, ShoppingCart, Heart, ChevronLeft, ChevronRight, ExternalLink, AlertCircle, CheckCircle, Zap } from 'lucide-react';
 
 // Interfaces
-interface Product {
-  id: string;
-  canonical_name: string;
-  category_id: string;
-  subcategory?: string;
-  base_unit: string;
-  description?: string;
-  specifications?: Record<string, any>;
-  synonyms?: string[];
-  image_url?: string;
-  waste_factor_percentage: number;
-  is_active: boolean;
-  created_at: number;
-  updated_at: number;
-}
 
 interface ProductVariant {
   id: string;
@@ -115,7 +100,7 @@ const UV_ProductDetails: React.FC = () => {
   const [searchParams] = useSearchParams();
   const quantityParam = searchParams.get('quantity');
   const shopIdParam = searchParams.get('shop_id');
-  const compareParam = searchParams.get('compare');
+  // const compareParam = searchParams.get('compare');
 
   // Local State
   const [selectedQuantity, setSelectedQuantity] = useState<number>(
@@ -123,16 +108,16 @@ const UV_ProductDetails: React.FC = () => {
   );
   const [selectedVariantId, setSelectedVariantId] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [showAllSpecs, setShowAllSpecs] = useState<boolean>(false);
+  // const [showAllSpecs, setShowAllSpecs] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'reviews' | 'specifications'>('overview');
 
   // Global State Access (Individual selectors to avoid infinite loops)
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
   const currentBom = useAppStore(state => state.current_bom);
   const activeComparison = useAppStore(state => state.active_comparison);
   const userLocation = useAppStore(state => state.user_location);
-  const language = useAppStore(state => state.app_preferences.language);
+  // const language = useAppStore(state => state.app_preferences.language);
   const currency = useAppStore(state => state.app_preferences.currency);
 
   // Store Actions
@@ -271,9 +256,9 @@ const UV_ProductDetails: React.FC = () => {
 
   // Image gallery handling
   const allImages = [
-    productData?.image_url,
-    currentVariant?.image_url,
-    ...(sortedPrices.slice(0, 3).map(p => p.shop?.image_url).filter(Boolean) || [])
+    "" ?? "",
+    "" ?? "",
+    ...(sortedPrices.slice(0, 3).map(p => "" ?? "").filter(Boolean) || [])
   ].filter(Boolean) as string[];
 
   const nextImage = () => {
@@ -565,7 +550,7 @@ const UV_ProductDetails: React.FC = () => {
                   disabled={!selectedVariantId}
                   className="flex items-center justify-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <Compare className="w-5 h-5" />
+                  <ArrowUpDown className="w-5 h-5" />
                   <span>Compare</span>
                   {activeComparison.product_ids.length > 0 && (
                     <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full">

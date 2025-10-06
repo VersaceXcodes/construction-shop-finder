@@ -5,8 +5,8 @@ import axios from 'axios';
 import { useAppStore } from '@/store/main';
 import { 
   Camera, 
-  FlashOff, 
-  Flash, 
+  Flashlight, 
+  
   X, 
   Search, 
   Package, 
@@ -129,10 +129,10 @@ const UV_BarcodeScanner: React.FC = () => {
   const addToBOMParam = searchParams.get('add_to_bom') === 'true';
 
   // Global state
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
   const authToken = useAppStore(state => state.authentication_state.auth_token);
   const currentBOM = useAppStore(state => state.current_bom);
-  const userLocation = useAppStore(state => state.user_location);
+  // const userLocation = useAppStore(state => state.user_location);
   const addBomItem = useAppStore(state => state.add_bom_item);
 
   // Local state
@@ -512,7 +512,7 @@ const UV_BarcodeScanner: React.FC = () => {
                       : 'bg-gray-700 hover:bg-gray-600'
                   }`}
                 >
-                  {cameraState.flash_enabled ? <Flash className="w-5 h-5" /> : <FlashOff className="w-5 h-5" />}
+                  {cameraState.flash_enabled ? <Flashlight className="w-5 h-5" /> : <Flashlight className="w-5 h-5" />}
                 </button>
                 <button
                   onClick={() => setManualEntryMode(prev => ({ ...prev, active: !prev.active }))}

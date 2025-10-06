@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
@@ -19,18 +19,6 @@ interface SearchSuggestion {
   };
 }
 
-interface SearchHistoryItem {
-  query: string;
-  timestamp: number;
-  results_count: number;
-}
-
-interface VoiceRecognitionResult {
-  transcript: string;
-  confidence: number;
-  isFinal: boolean;
-}
-
 const GV_SearchBar: React.FC = () => {
   // Global state access
   const isAuthenticated = useAppStore(state => state.authentication_state.authentication_status.is_authenticated);
@@ -44,7 +32,6 @@ const GV_SearchBar: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [voiceRecognitionActive, setVoiceRecognitionActive] = useState(false);
   const [voiceTranscript, setVoiceTranscript] = useState('');
-  const [barcodeModalOpen, setBarcodeModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
   // Refs
@@ -294,7 +281,6 @@ const GV_SearchBar: React.FC = () => {
 
   // Barcode scanner handler
   const openBarcodeScanner = () => {
-    setBarcodeModalOpen(true);
     navigate('/scan');
   };
 

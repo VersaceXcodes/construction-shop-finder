@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
-import { Bell, Plus, Search, Filter, Settings, TrendingUp, Eye, EyeOff, Edit, Trash2, AlertTriangle, CheckCircle, Clock, X } from 'lucide-react';
+import { Bell, Plus, Search, Filter, TrendingUp, Eye, EyeOff, Edit, Trash2, AlertTriangle, CheckCircle, Clock, X } from 'lucide-react';
 
 // Interfaces
 interface Alert {
@@ -60,9 +60,9 @@ interface NotificationPreferences {
 const UV_AlertManagement: React.FC = () => {
   // Store selectors
   const authToken = useAppStore(state => state.authentication_state.auth_token);
-  const currentUser = useAppStore(state => state.authentication_state.current_user);
-  const notificationState = useAppStore(state => state.notification_state);
-  const updateNotificationCounts = useAppStore(state => state.update_notification_counts);
+  // const currentUser = useAppStore(state => state.authentication_state.current_user);
+  // const notificationState = useAppStore(state => state.notification_state);
+  // const updateNotificationCounts = useAppStore(state => state.update_notification_counts);
 
   // Local state
   const [alertFilters, setAlertFilters] = useState<AlertFilters>({
@@ -569,7 +569,7 @@ const UV_AlertManagement: React.FC = () => {
                         <div className="flex items-center space-x-2 ml-4">
                           <button
                             onClick={() => handleToggleAlert(alert)}
-                            disabled={updateAlertMutation.isLoading}
+                            disabled={updateAlertMutation.isPending}
                             className={`p-2 rounded-lg transition-colors ${
                               alert.active
                                 ? 'text-green-600 hover:bg-green-50'
@@ -588,7 +588,7 @@ const UV_AlertManagement: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteAlert(alert.id)}
-                            disabled={deleteAlertMutation.isLoading}
+                            disabled={deleteAlertMutation.isPending}
                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete alert"
                           >
@@ -901,10 +901,10 @@ const UV_AlertManagement: React.FC = () => {
                 </button>
                 <button
                   onClick={handleCreateAlert}
-                  disabled={createAlertMutation.isLoading || !newAlertForm.notification_methods.length}
+                  disabled={createAlertMutation.isPending || !newAlertForm.notification_methods.length}
                   className="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {createAlertMutation.isLoading ? 'Creating...' : 'Create Alert'}
+                  {createAlertMutation.isPending ? 'Creating...' : 'Create Alert'}
                 </button>
               </div>
             </div>
