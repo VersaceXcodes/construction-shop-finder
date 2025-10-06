@@ -1,0 +1,193 @@
+{
+  "generated_at": "2025-10-06T10:30:00Z",
+  "user_structure": {
+    "table_name": "users",
+    "role_field": "user_type",
+    "registration_endpoint": "/api/auth/register",
+    "login_endpoint": "/api/auth/login",
+    "auth_type": "JWT",
+    "password_storage": "plaintext (development mode)"
+  },
+  "total_users": 6,
+  "verified_users": 6,
+  "users": [
+    {
+      "email": "john.buyer@example.com",
+      "password": "password123",
+      "role": "buyer",
+      "name": "John Smith",
+      "phone": "+971501234567",
+      "verified": true,
+      "user_id": "usr_001",
+      "description": "Regular buyer user - Dubai Marina location",
+      "location": {
+        "lat": 25.2048,
+        "lng": 55.2708,
+        "address": "Dubai Marina, Dubai, UAE"
+      }
+    },
+    {
+      "email": "sarah.contractor@example.com",
+      "password": "contractor123",
+      "role": "buyer",
+      "name": "Sarah Ahmed",
+      "phone": "+971507654321",
+      "verified": true,
+      "user_id": "usr_002",
+      "description": "Contractor/buyer user with active BOMs and RFQs",
+      "location": {
+        "lat": 25.2697,
+        "lng": 55.3095,
+        "address": "Business Bay, Dubai, UAE"
+      }
+    },
+    {
+      "email": "shop.owner1@example.com",
+      "password": "shop123",
+      "role": "seller",
+      "name": "Ahmed Al Mansoori",
+      "phone": "+971509876543",
+      "verified": true,
+      "user_id": "usr_003",
+      "shop_id": "shp_001",
+      "shop_name": "Dubai Building Materials Co.",
+      "description": "Seller with verified shop - Building materials supplier",
+      "location": {
+        "lat": 25.2582,
+        "lng": 55.3047,
+        "address": "Shop 15, Building Materials Souk, DIFC, Dubai"
+      }
+    },
+    {
+      "email": "materials.depot@example.com",
+      "password": "depot123",
+      "role": "seller",
+      "name": "Materials Depot LLC",
+      "phone": "+971502345678",
+      "verified": true,
+      "user_id": "usr_004",
+      "shop_id": "shp_002",
+      "shop_name": "Al Mansoori Hardware Store",
+      "description": "Seller with hardware store - Al Qusais location",
+      "location": {
+        "lat": 25.1171,
+        "lng": 55.2001,
+        "address": "Building 42, Al Qusais Industrial Area 2, Dubai"
+      }
+    },
+    {
+      "email": "mary.builder@example.com",
+      "password": "builder123",
+      "role": "buyer",
+      "name": "Mary Johnson",
+      "phone": "+971505432109",
+      "verified": false,
+      "user_id": "usr_005",
+      "description": "Unverified buyer user - Jumeirah location",
+      "location": {
+        "lat": 25.0764,
+        "lng": 55.1390,
+        "address": "Jumeirah, Dubai, UAE"
+      }
+    },
+    {
+      "email": "tools.warehouse@example.com",
+      "password": "tools123",
+      "role": "seller",
+      "name": "Tools Warehouse",
+      "phone": "+971508765432",
+      "verified": true,
+      "user_id": "usr_006",
+      "shop_id": "shp_003",
+      "shop_name": "Premium Tools Outlet",
+      "description": "Seller with tools shop - Deira location",
+      "location": {
+        "lat": 25.1836,
+        "lng": 55.2486,
+        "address": "Shop 8, Tools Market, Deira, Dubai"
+      }
+    }
+  ],
+  "by_role": {
+    "buyer": [
+      {
+        "email": "john.buyer@example.com",
+        "password": "password123",
+        "verified": true,
+        "name": "John Smith",
+        "user_id": "usr_001"
+      },
+      {
+        "email": "sarah.contractor@example.com",
+        "password": "contractor123",
+        "verified": true,
+        "name": "Sarah Ahmed",
+        "user_id": "usr_002"
+      },
+      {
+        "email": "mary.builder@example.com",
+        "password": "builder123",
+        "verified": false,
+        "name": "Mary Johnson",
+        "user_id": "usr_005"
+      }
+    ],
+    "seller": [
+      {
+        "email": "shop.owner1@example.com",
+        "password": "shop123",
+        "verified": true,
+        "name": "Ahmed Al Mansoori",
+        "user_id": "usr_003",
+        "shop_id": "shp_001"
+      },
+      {
+        "email": "materials.depot@example.com",
+        "password": "depot123",
+        "verified": true,
+        "name": "Materials Depot LLC",
+        "user_id": "usr_004",
+        "shop_id": "shp_002"
+      },
+      {
+        "email": "tools.warehouse@example.com",
+        "password": "tools123",
+        "verified": true,
+        "name": "Tools Warehouse",
+        "user_id": "usr_006",
+        "shop_id": "shp_003"
+      }
+    ]
+  },
+  "test_scenarios": {
+    "buyer_journey": {
+      "user": "john.buyer@example.com",
+      "actions": [
+        "Login",
+        "Search for products",
+        "Compare prices across shops",
+        "Create BOM",
+        "Submit RFQ to shops",
+        "View notifications"
+      ]
+    },
+    "seller_journey": {
+      "user": "shop.owner1@example.com",
+      "actions": [
+        "Login as seller",
+        "View shop dashboard",
+        "Manage inventory",
+        "Respond to RFQs",
+        "Update product prices"
+      ]
+    }
+  },
+  "api_base_url": "https://123construction-shop-finder.launchpulse.ai",
+  "frontend_url": "https://123construction-shop-finder.launchpulse.ai",
+  "notes": [
+    "All passwords are stored in plaintext for development/testing purposes",
+    "Users are pre-seeded in the database with test data",
+    "JWT tokens are generated on login with 7-day expiration",
+    "Seller users have associated shops with inventory and pricing data"
+  ]
+}

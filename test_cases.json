@@ -1,0 +1,865 @@
+{
+  "testCases": [
+    {
+      "id": "functional-app-test",
+      "name": "Functional Application Test",
+      "category": "functionality",
+      "priority": "high",
+      "description": "Verify the application has actual functionality beyond basic placeholder",
+      "steps": [
+        "Navigate to application URL: https://123construction-shop-finder.launchpulse.ai",
+        "Verify landing page loads with construction materials theme",
+        "Check for multiple interactive elements (navigation, search, login button)",
+        "Verify professional design and branding",
+        "Confirm application has real features, not just 'Vite + React' placeholder text"
+      ],
+      "expectedOutcome": "Application shows functional construction marketplace features with proper branding and navigation",
+      "failureCondition": "If page only shows 'Vite + React' placeholder, this test should FAIL"
+    },
+    {
+      "id": "landing-page-test",
+      "name": "Landing Page Content",
+      "category": "interface",
+      "priority": "high",
+      "description": "Test landing page displays correctly with construction materials marketplace content",
+      "steps": [
+        "Navigate to homepage",
+        "Verify page title contains '123Construction Shop Finder' or similar",
+        "Check for hero section with construction/materials imagery",
+        "Verify call-to-action buttons (Register, Login, Search)",
+        "Check for feature highlights (BOM builder, price comparison, etc.)",
+        "Verify footer with links to About, Terms, Privacy"
+      ],
+      "expectedOutcome": "Landing page shows professional construction marketplace interface with clear value proposition",
+      "tags": ["ui", "content", "landing"]
+    },
+    {
+      "id": "auth-001-registration",
+      "name": "User Registration Flow",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test complete user registration process for buyers and sellers",
+      "steps": [
+        "Navigate to registration page (/register)",
+        "Fill in email: test-buyer-{timestamp}@example.com",
+        "Fill in password: TestPassword123!",
+        "Fill in name: Test Buyer User",
+        "Select user type: buyer",
+        "Fill in phone number (optional)",
+        "Submit registration form",
+        "Verify redirect to dashboard or login page",
+        "Check for welcome notification or message"
+      ],
+      "expectedOutcome": "New user account created successfully, redirected to appropriate page with confirmation",
+      "testData": {
+        "email": "test-buyer-{timestamp}@example.com",
+        "password": "TestPassword123!",
+        "name": "Test Buyer User",
+        "user_type": "buyer"
+      },
+      "tags": ["authentication", "registration", "critical"]
+    },
+    {
+      "id": "auth-002-login-buyer",
+      "name": "Buyer Login",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test buyer user login with valid credentials",
+      "steps": [
+        "Navigate to login page (/login)",
+        "Enter email: john.buyer@example.com",
+        "Enter password: password123",
+        "Click login button",
+        "Verify successful login redirect",
+        "Check for user menu with name 'John Smith'",
+        "Verify buyer-specific features visible (BOM builder, RFQ, etc.)"
+      ],
+      "expectedOutcome": "Buyer logs in successfully, sees buyer dashboard with appropriate features",
+      "testData": {
+        "email": "john.buyer@example.com",
+        "password": "password123",
+        "expectedName": "John Smith"
+      },
+      "tags": ["authentication", "login", "buyer", "critical"]
+    },
+    {
+      "id": "auth-003-login-seller",
+      "name": "Seller Login",
+      "category": "authentication",
+      "priority": "high",
+      "description": "Test seller user login and shop dashboard access",
+      "steps": [
+        "Navigate to login page (/login)",
+        "Enter email: shop.owner1@example.com",
+        "Enter password: shop123",
+        "Click login button",
+        "Verify successful login redirect",
+        "Check for seller-specific navigation (Shop Dashboard, Inventory, Analytics)",
+        "Navigate to /shop/dashboard",
+        "Verify shop dashboard loads with shop name 'Dubai Building Materials Co.'"
+      ],
+      "expectedOutcome": "Seller logs in successfully, sees shop management features and dashboard",
+      "testData": {
+        "email": "shop.owner1@example.com",
+        "password": "shop123",
+        "expectedShopName": "Dubai Building Materials Co."
+      },
+      "tags": ["authentication", "login", "seller", "critical"]
+    },
+    {
+      "id": "auth-004-logout",
+      "name": "User Logout",
+      "category": "authentication",
+      "priority": "medium",
+      "description": "Test user logout functionality",
+      "steps": [
+        "Login as buyer user",
+        "Click on user profile menu",
+        "Click logout button",
+        "Verify redirect to landing page or login page",
+        "Attempt to access protected route /bom",
+        "Verify redirect to login page"
+      ],
+      "expectedOutcome": "User logs out successfully, cannot access protected routes without re-authentication",
+      "tags": ["authentication", "logout"]
+    },
+    {
+      "id": "search-001-basic",
+      "name": "Basic Product Search",
+      "category": "search",
+      "priority": "high",
+      "description": "Test basic product search functionality",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Login as buyer user",
+        "Navigate to search page or use global search bar",
+        "Enter search term: 'cement'",
+        "Submit search",
+        "Verify search results page loads",
+        "Check for product listings with 'cement' in name or description",
+        "Verify results show product images, names, prices",
+        "Check for filters (category, price range, location)"
+      ],
+      "expectedOutcome": "Search returns relevant cement products with pricing and shop information",
+      "testData": {
+        "searchTerm": "cement",
+        "expectedProducts": ["Portland Cement", "Emirates Cement", "Dubai Cement"]
+      },
+      "tags": ["search", "products", "critical"]
+    },
+    {
+      "id": "search-002-filters",
+      "name": "Search with Filters",
+      "category": "search",
+      "priority": "medium",
+      "description": "Test product search with category and price filters",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Navigate to search page",
+        "Search for: 'steel'",
+        "Apply category filter: 'Steel & Rebar'",
+        "Apply price range filter: 40-80 AED",
+        "Verify filtered results show only steel products in price range",
+        "Check result count updates correctly",
+        "Clear filters and verify all results return"
+      ],
+      "expectedOutcome": "Filters correctly narrow down search results to matching criteria",
+      "tags": ["search", "filters"]
+    },
+    {
+      "id": "product-001-details",
+      "name": "Product Details View",
+      "category": "products",
+      "priority": "high",
+      "description": "Test product details page with variants and pricing",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Search for 'Portland Cement'",
+        "Click on first product result",
+        "Verify product details page loads (/product/:product_id)",
+        "Check product information displayed (name, description, specifications)",
+        "Verify product variants shown (50kg, 25kg bags)",
+        "Check pricing from different shops",
+        "Verify stock availability indicators",
+        "Check for 'Add to BOM' button",
+        "Verify shop location and distance information"
+      ],
+      "expectedOutcome": "Product details page shows comprehensive product information with variants and multi-shop pricing",
+      "tags": ["products", "details", "critical"]
+    },
+    {
+      "id": "compare-001-prices",
+      "name": "Price Comparison",
+      "category": "comparison",
+      "priority": "high",
+      "description": "Test multi-shop price comparison feature",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Search for products",
+        "Select 2-3 products to compare",
+        "Navigate to comparison page (/compare)",
+        "Verify comparison table shows selected products",
+        "Check price comparison across different shops",
+        "Verify shop information (name, location, rating)",
+        "Check stock availability for each shop",
+        "Verify delivery information if available",
+        "Test 'Add to BOM' from comparison view"
+      ],
+      "expectedOutcome": "Price comparison table clearly shows pricing differences across shops with relevant details",
+      "tags": ["comparison", "pricing", "critical"]
+    },
+    {
+      "id": "bom-001-create",
+      "name": "Create New BOM",
+      "category": "bom",
+      "priority": "high",
+      "description": "Test creating a new Bill of Materials",
+      "prerequisites": ["User must be logged in as buyer"],
+      "steps": [
+        "Navigate to BOM page (/bom)",
+        "Click 'Create New BOM' button",
+        "Enter BOM title: 'Test Project BOM'",
+        "Enter description: 'Materials for test project'",
+        "Select project type: 'residential'",
+        "Save BOM",
+        "Verify BOM created successfully",
+        "Check BOM appears in BOM library"
+      ],
+      "expectedOutcome": "New BOM created and saved successfully, appears in user's BOM library",
+      "testData": {
+        "title": "Test Project BOM",
+        "description": "Materials for test project",
+        "project_type": "residential"
+      },
+      "tags": ["bom", "create", "critical"]
+    },
+    {
+      "id": "bom-002-add-items",
+      "name": "Add Items to BOM",
+      "category": "bom",
+      "priority": "high",
+      "description": "Test adding products to BOM",
+      "prerequisites": ["User must be logged in as buyer", "BOM must exist"],
+      "steps": [
+        "Open existing BOM or create new one",
+        "Search for product 'cement'",
+        "Select 'Portland Cement 50kg'",
+        "Enter quantity: 100",
+        "Set waste factor: 5%",
+        "Add to BOM",
+        "Verify item appears in BOM list",
+        "Check quantity calculations (100 + 5% = 105)",
+        "Add second item: 'Steel Rebar 12mm', quantity 50",
+        "Verify total item count shows 2 items",
+        "Check total cost calculation updates"
+      ],
+      "expectedOutcome": "Items successfully added to BOM with correct quantity and cost calculations",
+      "tags": ["bom", "items", "critical"]
+    },
+    {
+      "id": "bom-003-cost-analysis",
+      "name": "BOM Cost Analysis",
+      "category": "bom",
+      "priority": "medium",
+      "description": "Test BOM cost analysis and optimization suggestions",
+      "prerequisites": ["User must be logged in", "BOM with items must exist"],
+      "steps": [
+        "Open BOM with multiple items",
+        "Navigate to cost analysis view",
+        "Verify total cost displayed correctly",
+        "Check per-item cost breakdown",
+        "View optimization suggestions (cheapest shop per item)",
+        "Check multi-shop optimization (best combination)",
+        "Verify delivery cost calculations if applicable",
+        "Test toggle between single-shop vs multi-shop options"
+      ],
+      "expectedOutcome": "Cost analysis shows detailed breakdown with optimization recommendations",
+      "tags": ["bom", "analysis", "optimization"]
+    },
+    {
+      "id": "rfq-001-create",
+      "name": "Create RFQ from BOM",
+      "category": "rfq",
+      "priority": "high",
+      "description": "Test creating Request for Quote from BOM",
+      "prerequisites": ["User must be logged in as buyer", "BOM with items must exist"],
+      "steps": [
+        "Open BOM with items",
+        "Click 'Request Quotes' or 'Create RFQ' button",
+        "Enter RFQ title: 'Test RFQ for Materials'",
+        "Enter description",
+        "Set deadline: 7 days from now",
+        "Enter delivery location",
+        "Set budget limit (optional)",
+        "Select shops to invite (or auto-invite based on location)",
+        "Submit RFQ",
+        "Verify RFQ created successfully",
+        "Check RFQ appears in RFQ inbox"
+      ],
+      "expectedOutcome": "RFQ created successfully and sent to selected shops",
+      "testData": {
+        "title": "Test RFQ for Materials",
+        "deadline_days": 7
+      },
+      "tags": ["rfq", "create", "critical"]
+    },
+    {
+      "id": "rfq-002-seller-respond",
+      "name": "Seller Respond to RFQ",
+      "category": "rfq",
+      "priority": "high",
+      "description": "Test seller responding to RFQ invitation",
+      "prerequisites": ["Must login as seller", "Active RFQ must exist"],
+      "steps": [
+        "Login as seller user (shop.owner1@example.com)",
+        "Navigate to RFQ inbox (/rfq)",
+        "Verify pending RFQ invitations visible",
+        "Open RFQ invitation",
+        "Review BOM items and quantities",
+        "Enter pricing for each line item",
+        "Enter delivery fee",
+        "Enter estimated delivery days",
+        "Add notes and terms",
+        "Submit quote",
+        "Verify quote submitted successfully",
+        "Check quote appears in buyer's RFQ replies"
+      ],
+      "expectedOutcome": "Seller successfully submits quote which buyer can view",
+      "tags": ["rfq", "seller", "quote", "critical"]
+    },
+    {
+      "id": "rfq-003-messaging",
+      "name": "RFQ Messaging",
+      "category": "rfq",
+      "priority": "medium",
+      "description": "Test messaging between buyer and seller within RFQ",
+      "prerequisites": ["RFQ must exist with at least one quote"],
+      "steps": [
+        "Login as buyer",
+        "Open RFQ with quote",
+        "Send message to seller: 'Can you improve delivery time?'",
+        "Logout and login as seller",
+        "Check for new message notification",
+        "Open RFQ and view message",
+        "Reply to message",
+        "Verify real-time message updates (if applicable)"
+      ],
+      "expectedOutcome": "Messages sent and received successfully between buyer and seller",
+      "tags": ["rfq", "messaging", "communication"]
+    },
+    {
+      "id": "shop-001-dashboard",
+      "name": "Shop Dashboard View",
+      "category": "shop",
+      "priority": "high",
+      "description": "Test shop dashboard for sellers",
+      "prerequisites": ["Must login as seller with shop"],
+      "steps": [
+        "Login as seller (shop.owner1@example.com)",
+        "Navigate to /shop/dashboard",
+        "Verify shop name and details displayed",
+        "Check for key metrics (active products, pending RFQs, recent orders)",
+        "Verify quick action buttons (Add Product, Update Inventory)",
+        "Check for pending RFQ notifications",
+        "Verify recent activity feed or timeline"
+      ],
+      "expectedOutcome": "Shop dashboard shows relevant business metrics and quick actions for seller",
+      "tags": ["shop", "dashboard", "seller"]
+    },
+    {
+      "id": "shop-002-inventory",
+      "name": "Inventory Management",
+      "category": "shop",
+      "priority": "high",
+      "description": "Test inventory management features for sellers",
+      "prerequisites": ["Must login as seller with shop"],
+      "steps": [
+        "Navigate to /shop/inventory",
+        "View list of products in inventory",
+        "Verify stock levels displayed",
+        "Update stock quantity for a product",
+        "Toggle stock availability (in stock / out of stock)",
+        "Update lead time for a product",
+        "Save changes",
+        "Verify changes reflected immediately",
+        "Check low stock indicators"
+      ],
+      "expectedOutcome": "Seller can successfully update inventory levels and availability",
+      "tags": ["shop", "inventory", "seller", "critical"]
+    },
+    {
+      "id": "shop-003-pricing",
+      "name": "Product Pricing Management",
+      "category": "shop",
+      "priority": "high",
+      "description": "Test price management features for sellers",
+      "prerequisites": ["Must login as seller with shop"],
+      "steps": [
+        "Navigate to shop inventory or pricing section",
+        "Select a product to update price",
+        "Update base price",
+        "Add bulk pricing tiers (e.g., 100+ units, 500+ units)",
+        "Set promotional price with start/end dates",
+        "Save price changes",
+        "Verify changes saved",
+        "Check price history logged",
+        "Verify updated price shows in product search"
+      ],
+      "expectedOutcome": "Seller can update pricing including bulk tiers and promotions",
+      "tags": ["shop", "pricing", "seller"]
+    },
+    {
+      "id": "map-001-view",
+      "name": "Map View with Shop Locations",
+      "category": "map",
+      "priority": "medium",
+      "description": "Test interactive map showing shop locations",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Navigate to /map",
+        "Verify map loads with shop markers",
+        "Check user location marker (if permission granted)",
+        "Click on shop marker",
+        "Verify shop info popup displays (name, address, rating)",
+        "Test filtering shops by category or type",
+        "Test distance radius filter",
+        "Click 'View Shop' from map popup",
+        "Verify navigation to shop details"
+      ],
+      "expectedOutcome": "Interactive map displays shops with accurate locations and filtering options",
+      "tags": ["map", "location", "visualization"]
+    },
+    {
+      "id": "alerts-001-price",
+      "name": "Price Drop Alert",
+      "category": "alerts",
+      "priority": "medium",
+      "description": "Test setting up price drop alerts",
+      "prerequisites": ["User must be logged in as buyer"],
+      "steps": [
+        "Navigate to product details page",
+        "Click 'Set Price Alert' or similar",
+        "Enter target price threshold",
+        "Select notification method (email, push)",
+        "Save alert",
+        "Navigate to /alerts",
+        "Verify alert appears in alerts list",
+        "Check alert status shows as 'active'",
+        "Test editing alert threshold",
+        "Test deleting alert"
+      ],
+      "expectedOutcome": "Price alert successfully created and manageable",
+      "tags": ["alerts", "notifications", "pricing"]
+    },
+    {
+      "id": "alerts-002-stock",
+      "name": "Stock Availability Alert",
+      "category": "alerts",
+      "priority": "medium",
+      "description": "Test stock availability notification alerts",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Find product that is out of stock",
+        "Click 'Notify When Available'",
+        "Select notification preferences",
+        "Save alert",
+        "Verify alert created in alerts management",
+        "Check alert shows product and shop information"
+      ],
+      "expectedOutcome": "Stock alert successfully set up for out-of-stock products",
+      "tags": ["alerts", "inventory", "stock"]
+    },
+    {
+      "id": "profile-001-view",
+      "name": "User Profile View",
+      "category": "profile",
+      "priority": "medium",
+      "description": "Test viewing user profile information",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Navigate to /profile",
+        "Verify user information displayed (name, email, phone)",
+        "Check user type badge (buyer/seller)",
+        "Verify location information if set",
+        "Check account creation date",
+        "View verification status",
+        "Check for profile completion percentage or indicators"
+      ],
+      "expectedOutcome": "User profile shows all relevant account information",
+      "tags": ["profile", "user"]
+    },
+    {
+      "id": "profile-002-edit",
+      "name": "Edit User Profile",
+      "category": "profile",
+      "priority": "medium",
+      "description": "Test editing user profile information",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Navigate to /profile or /settings",
+        "Click 'Edit Profile'",
+        "Update name",
+        "Update phone number",
+        "Update address",
+        "Update location coordinates (if applicable)",
+        "Save changes",
+        "Verify success message",
+        "Refresh page and verify changes persisted"
+      ],
+      "expectedOutcome": "User can successfully update profile information",
+      "tags": ["profile", "edit", "user"]
+    },
+    {
+      "id": "categories-001-browse",
+      "name": "Browse Product Categories",
+      "category": "navigation",
+      "priority": "medium",
+      "description": "Test category browsing and navigation",
+      "steps": [
+        "Navigate to /categories",
+        "Verify top-level categories displayed (Building Materials, Tools, Hardware)",
+        "Click on 'Building Materials' category",
+        "Verify subcategories shown (Cement & Concrete, Steel & Rebar)",
+        "Click on subcategory",
+        "Verify products in category displayed",
+        "Test breadcrumb navigation back to parent category"
+      ],
+      "expectedOutcome": "Category hierarchy navigable with proper product filtering",
+      "tags": ["categories", "navigation", "browsing"]
+    },
+    {
+      "id": "notifications-001-view",
+      "name": "View Notifications",
+      "category": "notifications",
+      "priority": "medium",
+      "description": "Test notification center functionality",
+      "prerequisites": ["User must be logged in"],
+      "steps": [
+        "Click on notification icon in top navigation",
+        "Verify notification dropdown opens",
+        "Check for notifications (price alerts, RFQ updates, etc.)",
+        "Click on a notification",
+        "Verify navigation to related content",
+        "Mark notification as read",
+        "Test 'Mark all as read' functionality",
+        "Navigate to full notifications page",
+        "Verify notification history"
+      ],
+      "expectedOutcome": "Notification center displays and manages notifications correctly",
+      "tags": ["notifications", "ui"]
+    },
+    {
+      "id": "responsive-001-mobile",
+      "name": "Mobile Responsiveness",
+      "category": "responsive",
+      "priority": "medium",
+      "description": "Test mobile layout and navigation",
+      "steps": [
+        "Set viewport to mobile size (375x667)",
+        "Navigate to homepage",
+        "Verify mobile layout displays correctly",
+        "Check hamburger menu or mobile navigation",
+        "Test bottom navigation bar (if applicable)",
+        "Navigate through key pages (search, BOM, profile)",
+        "Verify touch-friendly button sizes",
+        "Test forms on mobile (login, registration)",
+        "Check for horizontal scrolling issues"
+      ],
+      "expectedOutcome": "Application is fully functional and well-designed on mobile devices",
+      "tags": ["responsive", "mobile", "ui"]
+    },
+    {
+      "id": "responsive-002-tablet",
+      "name": "Tablet Responsiveness",
+      "category": "responsive",
+      "priority": "low",
+      "description": "Test tablet layout and functionality",
+      "steps": [
+        "Set viewport to tablet size (768x1024)",
+        "Navigate through application",
+        "Verify layout adapts appropriately",
+        "Check navigation menu behavior",
+        "Test data tables and comparison views",
+        "Verify modal and dialog sizing"
+      ],
+      "expectedOutcome": "Application layout works well on tablet devices",
+      "tags": ["responsive", "tablet", "ui"]
+    },
+    {
+      "id": "performance-001-load",
+      "name": "Page Load Performance",
+      "category": "performance",
+      "priority": "medium",
+      "description": "Test page load times and performance",
+      "steps": [
+        "Clear browser cache",
+        "Navigate to homepage",
+        "Measure time to interactive (should be < 3 seconds)",
+        "Check for lazy loading of images",
+        "Navigate to search results with many products",
+        "Verify pagination or infinite scroll performance",
+        "Test large BOM with 20+ items",
+        "Check for smooth scrolling and interactions"
+      ],
+      "expectedOutcome": "Pages load quickly with smooth interactions",
+      "tags": ["performance", "optimization"]
+    },
+    {
+      "id": "security-001-auth",
+      "name": "Authentication Security",
+      "category": "security",
+      "priority": "high",
+      "description": "Test authentication security measures",
+      "steps": [
+        "Attempt to access protected route without login",
+        "Verify redirect to login page",
+        "Test invalid login credentials",
+        "Verify error message shown",
+        "Test SQL injection in login form",
+        "Test XSS in input fields",
+        "Verify password field masked",
+        "Check for HTTPS connection",
+        "Test session timeout behavior"
+      ],
+      "expectedOutcome": "Authentication properly protects routes and handles security threats",
+      "failureCondition": "Any security vulnerability allows unauthorized access",
+      "tags": ["security", "authentication", "critical"]
+    },
+    {
+      "id": "security-002-authorization",
+      "name": "Role-Based Authorization",
+      "category": "security",
+      "priority": "high",
+      "description": "Test role-based access controls",
+      "steps": [
+        "Login as buyer user",
+        "Attempt to access seller routes (/shop/dashboard)",
+        "Verify access denied or redirect",
+        "Attempt to edit another user's BOM",
+        "Verify authorization check prevents access",
+        "Login as seller",
+        "Attempt to access buyer-specific features",
+        "Verify appropriate restrictions in place"
+      ],
+      "expectedOutcome": "Users can only access features appropriate to their role",
+      "failureCondition": "Any user can access unauthorized features",
+      "tags": ["security", "authorization", "critical"]
+    },
+    {
+      "id": "error-001-404",
+      "name": "404 Error Handling",
+      "category": "error_handling",
+      "priority": "low",
+      "description": "Test 404 page and invalid route handling",
+      "steps": [
+        "Navigate to invalid route /invalid-page-xyz",
+        "Verify 404 page or redirect to homepage",
+        "Check for user-friendly error message",
+        "Verify navigation still works",
+        "Test navigation back to valid pages"
+      ],
+      "expectedOutcome": "Invalid routes handled gracefully with helpful error messages",
+      "tags": ["errors", "navigation"]
+    },
+    {
+      "id": "error-002-api",
+      "name": "API Error Handling",
+      "category": "error_handling",
+      "priority": "medium",
+      "description": "Test handling of API errors",
+      "steps": [
+        "Trigger API error (disconnect network or use invalid data)",
+        "Verify error message displayed to user",
+        "Check for retry functionality",
+        "Verify application doesn't crash",
+        "Test form validation error messages",
+        "Check for helpful error descriptions"
+      ],
+      "expectedOutcome": "API errors handled gracefully with user-friendly messages",
+      "tags": ["errors", "api"]
+    },
+    {
+      "id": "integration-001-e2e",
+      "name": "End-to-End Buyer Journey",
+      "category": "integration",
+      "priority": "high",
+      "description": "Complete buyer user journey from registration to RFQ submission",
+      "steps": [
+        "Register new buyer account",
+        "Login with new credentials",
+        "Search for construction materials",
+        "View product details",
+        "Compare prices across shops",
+        "Create new BOM",
+        "Add 3-5 products to BOM",
+        "Review cost analysis",
+        "Create RFQ from BOM",
+        "Send RFQ to shops",
+        "Set price alert for a product",
+        "View notifications",
+        "Logout"
+      ],
+      "expectedOutcome": "Complete buyer journey works seamlessly without errors",
+      "tags": ["integration", "e2e", "buyer", "critical"]
+    },
+    {
+      "id": "integration-002-seller",
+      "name": "End-to-End Seller Journey",
+      "category": "integration",
+      "priority": "high",
+      "description": "Complete seller user journey from login to RFQ response",
+      "steps": [
+        "Login as seller",
+        "View shop dashboard",
+        "Update inventory for 2 products",
+        "Update pricing with promotional price",
+        "View pending RFQ invitations",
+        "Open RFQ and review items",
+        "Submit quote with pricing",
+        "Send message to buyer",
+        "View shop analytics",
+        "Logout"
+      ],
+      "expectedOutcome": "Complete seller journey works seamlessly without errors",
+      "tags": ["integration", "e2e", "seller", "critical"]
+    },
+    {
+      "id": "ui-001-consistency",
+      "name": "UI Design Consistency",
+      "category": "interface",
+      "priority": "medium",
+      "description": "Test UI design consistency across application",
+      "steps": [
+        "Navigate through multiple pages",
+        "Verify consistent color scheme",
+        "Check button styles are uniform",
+        "Verify typography consistency",
+        "Check spacing and alignment",
+        "Verify icon usage consistent",
+        "Check form field styling",
+        "Verify modal/dialog styling",
+        "Check loading states consistent"
+      ],
+      "expectedOutcome": "UI design is consistent across all pages following design system",
+      "tags": ["ui", "design", "consistency"]
+    },
+    {
+      "id": "accessibility-001-keyboard",
+      "name": "Keyboard Navigation",
+      "category": "accessibility",
+      "priority": "medium",
+      "description": "Test keyboard-only navigation",
+      "steps": [
+        "Navigate site using only Tab key",
+        "Verify focus indicators visible",
+        "Test form completion with keyboard",
+        "Test dropdown menus with arrow keys",
+        "Verify Enter key submits forms",
+        "Test Escape key closes modals",
+        "Check skip-to-content link",
+        "Verify logical tab order"
+      ],
+      "expectedOutcome": "All features accessible via keyboard navigation",
+      "tags": ["accessibility", "keyboard"]
+    },
+    {
+      "id": "accessibility-002-screen-reader",
+      "name": "Screen Reader Compatibility",
+      "category": "accessibility",
+      "priority": "low",
+      "description": "Test screen reader compatibility",
+      "steps": [
+        "Enable screen reader (NVDA or JAWS)",
+        "Navigate through homepage",
+        "Verify alt text on images",
+        "Check ARIA labels on interactive elements",
+        "Test form field labels announced correctly",
+        "Verify heading hierarchy",
+        "Check landmark regions defined",
+        "Test dynamic content announcements"
+      ],
+      "expectedOutcome": "Screen readers can navigate and understand all content",
+      "tags": ["accessibility", "screen-reader"]
+    }
+  ],
+  "testSuites": {
+    "smoke": {
+      "name": "Smoke Test Suite",
+      "description": "Quick validation that core features work",
+      "tests": [
+        "functional-app-test",
+        "landing-page-test",
+        "auth-002-login-buyer",
+        "search-001-basic",
+        "product-001-details",
+        "bom-001-create"
+      ]
+    },
+    "critical": {
+      "name": "Critical Path Suite",
+      "description": "Essential features that must work",
+      "tests": [
+        "auth-002-login-buyer",
+        "auth-003-login-seller",
+        "search-001-basic",
+        "product-001-details",
+        "compare-001-prices",
+        "bom-001-create",
+        "bom-002-add-items",
+        "rfq-001-create",
+        "rfq-002-seller-respond",
+        "shop-002-inventory"
+      ]
+    },
+    "regression": {
+      "name": "Full Regression Suite",
+      "description": "Comprehensive test coverage",
+      "tests": "ALL"
+    },
+    "buyer_flow": {
+      "name": "Buyer User Flow",
+      "description": "Tests focused on buyer features",
+      "tests": [
+        "auth-001-registration",
+        "auth-002-login-buyer",
+        "search-001-basic",
+        "search-002-filters",
+        "product-001-details",
+        "compare-001-prices",
+        "bom-001-create",
+        "bom-002-add-items",
+        "bom-003-cost-analysis",
+        "rfq-001-create",
+        "alerts-001-price",
+        "profile-001-view"
+      ]
+    },
+    "seller_flow": {
+      "name": "Seller User Flow",
+      "description": "Tests focused on seller features",
+      "tests": [
+        "auth-003-login-seller",
+        "shop-001-dashboard",
+        "shop-002-inventory",
+        "shop-003-pricing",
+        "rfq-002-seller-respond",
+        "rfq-003-messaging"
+      ]
+    }
+  },
+  "testEnvironment": {
+    "frontend_url": "https://123construction-shop-finder.launchpulse.ai",
+    "backend_url": "https://123construction-shop-finder.launchpulse.ai",
+    "test_users_file": "test_users.json",
+    "browsers": ["Chrome", "Firefox", "Safari", "Edge"],
+    "devices": ["Desktop 1920x1080", "Tablet 768x1024", "Mobile 375x667"]
+  },
+  "executionNotes": [
+    "Run smoke tests first to validate basic functionality",
+    "Execute critical path tests before each release",
+    "Full regression suite should run nightly or before major releases",
+    "Some tests require specific user types - refer to test_users.json",
+    "Tests marked 'critical' must pass for release approval",
+    "Use test data from database seed for consistent results"
+  ]
+}

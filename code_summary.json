@@ -1,0 +1,400 @@
+{
+  "project_name": "123Construction Shop Finder",
+  "description": "A comprehensive construction materials marketplace and shop finder platform connecting buyers with suppliers across Dubai. Features include price comparison, BOM management, RFQ system, and location-based shop discovery.",
+  "tech_stack": {
+    "frontend": [
+      "React 18.3.1",
+      "TypeScript 5.5.3",
+      "Vite 5.4.0",
+      "React Router 6.26.0",
+      "TanStack React Query 5.0.0",
+      "Zustand (state management)",
+      "Redux Toolkit 2.2.7",
+      "Tailwind CSS 3.4.8",
+      "Radix UI components",
+      "Framer Motion 11.5.4",
+      "Axios 1.7.7",
+      "Socket.IO Client 4.7.5"
+    ],
+    "backend": [
+      "Node.js",
+      "Express 4.19.2",
+      "TypeScript 5.8.2",
+      "PostgreSQL (via pg 8.13.3)",
+      "JWT authentication (jsonwebtoken 9.0.2)",
+      "Socket.IO",
+      "Multer (file uploads)",
+      "Zod 3.24.2 (validation)",
+      "Morgan (logging)",
+      "CORS"
+    ],
+    "testing": [
+      "Vitest 3.2.4",
+      "Testing Library React 16.3.0",
+      "Jest 29.7.0",
+      "Supertest 6.3.3"
+    ],
+    "dev_tools": [
+      "TSX 4.7.1",
+      "ESLint 9.8.0",
+      "Prettier",
+      "Nodemon 3.1.4",
+      "Concurrently 9.0.1"
+    ]
+  },
+  "architecture": {
+    "type": "Full-stack monorepo",
+    "structure": {
+      "frontend": "vitereact/ - React SPA with component-based architecture",
+      "backend": "backend/ - Express REST API with PostgreSQL",
+      "shared": "Shared types and schemas via Zod"
+    },
+    "state_management": "Zustand with Redux Toolkit for complex state",
+    "authentication": "JWT-based with token storage and refresh",
+    "api_communication": "REST API with Axios + React Query for caching",
+    "real_time": "Socket.IO for live updates (RFQ messages, notifications)"
+  },
+  "features": [
+    {
+      "name": "User Authentication & Authorization",
+      "description": "Complete auth system with registration, login, password reset, and role-based access (buyer/seller)",
+      "files": [
+        "backend/server.ts (lines 210-411)",
+        "vitereact/src/components/views/UV_UserRegistration.tsx",
+        "vitereact/src/components/views/UV_UserLogin.tsx",
+        "vitereact/src/store/main.tsx"
+      ],
+      "endpoints": [
+        "POST /api/auth/register",
+        "POST /api/auth/login",
+        "POST /api/auth/logout",
+        "GET /api/auth/me",
+        "POST /api/auth/forgot-password",
+        "POST /api/auth/reset-password"
+      ]
+    },
+    {
+      "name": "Shop Management",
+      "description": "Shop creation, updates, location-based search, and verification system for sellers",
+      "files": [
+        "backend/server.ts (lines 593-872)",
+        "vitereact/src/components/views/UV_ShopDashboard.tsx",
+        "vitereact/src/components/views/UV_ShopSettings.tsx",
+        "vitereact/src/components/views/UV_InventoryManager.tsx"
+      ],
+      "endpoints": [
+        "GET /api/shops",
+        "POST /api/shops",
+        "GET /api/shops/:shop_id",
+        "PUT /api/shops/:shop_id",
+        "GET /api/shops/near-me"
+      ]
+    },
+    {
+      "name": "Product Catalog & Search",
+      "description": "Comprehensive product database with variants, categories, search with filters, and synonym resolution",
+      "files": [
+        "backend/server.ts (lines 879-1360)",
+        "vitereact/src/components/views/UV_SearchResults.tsx",
+        "vitereact/src/components/views/UV_ProductDetails.tsx",
+        "vitereact/src/components/views/UV_CategoryBrowser.tsx"
+      ],
+      "endpoints": [
+        "GET /api/products",
+        "POST /api/products",
+        "GET /api/products/:product_id",
+        "GET /api/products/:product_id/variants",
+        "GET /api/categories",
+        "GET /api/search",
+        "GET /api/search/suggestions"
+      ]
+    },
+    {
+      "name": "Price Comparison",
+      "description": "Multi-shop price comparison with bulk pricing, promotions, distance calculation, and delivery optimization",
+      "files": [
+        "backend/server.ts (lines 1362-1749)",
+        "vitereact/src/components/views/UV_ComparisonTable.tsx"
+      ],
+      "endpoints": [
+        "GET /api/prices",
+        "POST /api/prices",
+        "GET /api/prices/compare"
+      ]
+    },
+    {
+      "name": "BOM (Bill of Materials) Builder",
+      "description": "Create and manage project BOMs, cost analysis, sharing, duplication, and waste factor calculations",
+      "files": [
+        "backend/server.ts (lines 1751-2226)",
+        "vitereact/src/components/views/UV_BOMBuilder.tsx",
+        "vitereact/src/components/views/UV_BOMLibrary.tsx",
+        "vitereact/src/components/views/GV_BOMQuickAccess.tsx"
+      ],
+      "endpoints": [
+        "GET /api/boms",
+        "POST /api/boms",
+        "GET /api/boms/:bom_id",
+        "PUT /api/boms/:bom_id",
+        "DELETE /api/boms/:bom_id",
+        "GET /api/boms/:bom_id/items",
+        "POST /api/boms/:bom_id/items",
+        "POST /api/boms/:bom_id/duplicate",
+        "GET /api/boms/:bom_id/cost-analysis",
+        "POST /api/boms/:bom_id/share"
+      ]
+    },
+    {
+      "name": "RFQ (Request for Quote) System",
+      "description": "Submit RFQs to shops, receive quotes, messaging, and comparison features",
+      "files": [
+        "backend/server.ts (lines 2228-2550)",
+        "vitereact/src/components/views/UV_RFQInbox.tsx"
+      ],
+      "endpoints": [
+        "GET /api/rfqs",
+        "POST /api/rfqs",
+        "GET /api/rfqs/:rfq_id",
+        "PUT /api/rfqs/:rfq_id",
+        "POST /api/rfqs/:rfq_id/invite-shops",
+        "GET /api/rfqs/:rfq_id/replies",
+        "POST /api/rfqs/:rfq_id/replies",
+        "GET /api/rfqs/:rfq_id/messages",
+        "POST /api/rfqs/:rfq_id/messages"
+      ]
+    },
+    {
+      "name": "Inventory Management",
+      "description": "Track stock levels, lead times, minimum order quantities for shop owners",
+      "files": [
+        "vitereact/src/components/views/UV_InventoryManager.tsx"
+      ],
+      "endpoints": [
+        "GET /api/inventory (implied from schema)",
+        "PUT /api/inventory (implied from schema)"
+      ]
+    },
+    {
+      "name": "Price Alerts & Notifications",
+      "description": "Set price alerts, stock notifications, and receive real-time updates",
+      "files": [
+        "backend/server.ts (lines 2552-2700)",
+        "vitereact/src/components/views/UV_AlertManagement.tsx",
+        "vitereact/src/components/views/GV_NotificationCenter.tsx"
+      ],
+      "endpoints": [
+        "GET /api/alerts",
+        "POST /api/alerts",
+        "PUT /api/alerts/:alert_id",
+        "DELETE /api/alerts/:alert_id",
+        "GET /api/notifications",
+        "PUT /api/notifications/:notification_id/read"
+      ]
+    },
+    {
+      "name": "Map View & Location Services",
+      "description": "Interactive map showing shops, distance calculations, and location-based filtering",
+      "files": [
+        "vitereact/src/components/views/UV_MapView.tsx"
+      ],
+      "endpoints": [
+        "GET /api/map/shops"
+      ]
+    },
+    {
+      "name": "Reviews & Ratings",
+      "description": "User reviews for shops and products with verification and voting",
+      "files": [
+        "backend/server.ts (lines 2702-2850)"
+      ],
+      "endpoints": [
+        "GET /api/reviews",
+        "POST /api/reviews",
+        "POST /api/reviews/:review_id/vote"
+      ]
+    },
+    {
+      "name": "Trip Planner",
+      "description": "Plan shopping trips across multiple shops with route optimization",
+      "files": [
+        "vitereact/src/components/views/UV_TripPlanner.tsx"
+      ],
+      "endpoints": [
+        "GET /api/trip-plans (implied)",
+        "POST /api/trip-plans (implied)"
+      ]
+    },
+    {
+      "name": "Barcode Scanner",
+      "description": "Scan product barcodes to quickly find items and compare prices",
+      "files": [
+        "vitereact/src/components/views/UV_BarcodeScanner.tsx"
+      ]
+    },
+    {
+      "name": "User Profile & Settings",
+      "description": "Manage user profile, preferences, location, and account settings",
+      "files": [
+        "vitereact/src/components/views/UV_UserProfile.tsx",
+        "vitereact/src/components/views/UV_UserSettings.tsx"
+      ],
+      "endpoints": [
+        "GET /api/users/:user_id",
+        "PUT /api/users/:user_id"
+      ]
+    },
+    {
+      "name": "Search History & Saved Searches",
+      "description": "Track search history and save frequent searches with alerts",
+      "files": [
+        "vitereact/src/components/views/UV_SavedSearches.tsx"
+      ],
+      "endpoints": [
+        "GET /api/search/history",
+        "POST /api/search/history"
+      ]
+    },
+    {
+      "name": "Analytics & Reporting",
+      "description": "Shop analytics dashboard with sales metrics and performance tracking",
+      "files": [
+        "vitereact/src/components/views/UV_ShopAnalytics.tsx"
+      ]
+    },
+    {
+      "name": "Community Q&A",
+      "description": "Community forum for construction-related questions and answers",
+      "files": [
+        "vitereact/src/components/views/UV_CommunityQA.tsx"
+      ]
+    }
+  ],
+  "database_tables": [
+    "users",
+    "shops",
+    "categories",
+    "products",
+    "product_variants",
+    "prices",
+    "price_history",
+    "inventory",
+    "boms",
+    "bom_items",
+    "rfqs",
+    "rfq_shop_invites",
+    "rfq_replies",
+    "messages",
+    "alerts",
+    "notifications",
+    "reviews",
+    "search_history",
+    "user_favorites",
+    "price_verifications",
+    "saved_searches",
+    "trip_plans",
+    "user_sessions",
+    "system_settings",
+    "analytics_events"
+  ],
+  "key_components": {
+    "global_views": [
+      "GV_TopNavigation - Main navigation bar",
+      "GV_MobileBottomNav - Mobile navigation",
+      "GV_BOMQuickAccess - Floating BOM access widget",
+      "GV_NotificationCenter - Notification dropdown",
+      "GV_SearchBar - Global search",
+      "GV_UserProfileMenu - User menu dropdown",
+      "GV_LanguageToggle - Language switcher"
+    ],
+    "ui_components": [
+      "shadcn/ui components (Button, Card, Dialog, etc.)",
+      "Custom form components",
+      "Data tables with sorting/filtering",
+      "Charts and visualizations (Recharts)"
+    ]
+  },
+  "api_endpoints": {
+    "total_count": 70,
+    "categories": {
+      "authentication": 6,
+      "users": 3,
+      "shops": 5,
+      "categories": 3,
+      "products": 4,
+      "variants": 3,
+      "prices": 3,
+      "boms": 11,
+      "rfqs": 9,
+      "alerts": 4,
+      "notifications": 3,
+      "reviews": 3,
+      "favorites": 3,
+      "search": 4,
+      "map": 1,
+      "messages": 2,
+      "misc": 3
+    }
+  },
+  "routing": {
+    "public_routes": [
+      "/",
+      "/register",
+      "/login",
+      "/categories",
+      "/help",
+      "/terms",
+      "/privacy",
+      "/about"
+    ],
+    "protected_routes": [
+      "/search",
+      "/product/:product_id",
+      "/compare",
+      "/bom/:bom_id?",
+      "/bom-library",
+      "/shop/dashboard",
+      "/shop/inventory",
+      "/shop/settings",
+      "/shop/analytics",
+      "/rfq",
+      "/profile",
+      "/map",
+      "/alerts",
+      "/scan",
+      "/trip",
+      "/orders",
+      "/saved-searches",
+      "/settings",
+      "/community"
+    ]
+  },
+  "deployment": {
+    "frontend_url": "https://123construction-shop-finder.launchpulse.ai",
+    "backend_url": "https://123construction-shop-finder.launchpulse.ai",
+    "environment": "Production",
+    "hosting": "LaunchPulse Platform"
+  },
+  "special_features": [
+    "Geospatial distance calculations using Haversine formula",
+    "Bulk pricing tier support",
+    "Promotional pricing with date ranges",
+    "Multi-shop purchase optimization algorithms",
+    "Real-time messaging via Socket.IO",
+    "Price verification system with community input",
+    "Waste factor calculations for construction materials",
+    "Location-based shop discovery with radius filtering",
+    "Delivery cost estimation based on distance",
+    "Multi-language support (English/Arabic RTL)"
+  ],
+  "data_seed": {
+    "users": 6,
+    "shops": 3,
+    "categories": 8,
+    "products": 5,
+    "variants": 7,
+    "prices": 7,
+    "boms": 3,
+    "rfqs": 2,
+    "reviews": 3
+  }
+}
