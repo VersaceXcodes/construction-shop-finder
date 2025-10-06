@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
 import axios from 'axios';
 import { 
   TrendingUpIcon, 
-  TrendingDownIcon,
   AlertTriangleIcon,
   MessageSquareIcon,
   ShoppingCartIcon,
@@ -15,7 +14,6 @@ import {
   ClockIcon,
   SettingsIcon,
   RefreshCwIcon,
-  EyeIcon,
   ArrowRightIcon,
   CheckCircleIcon,
   XCircleIcon

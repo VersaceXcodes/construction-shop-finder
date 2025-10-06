@@ -26,7 +26,6 @@ interface CompanyStats {
 
 const UV_AboutUs: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  // const navigate = useNavigate();
 
   // Global state access (individual selectors to avoid infinite loops)
   const currentUser = useAppStore(state => state.authentication_state.current_user);
@@ -84,7 +83,7 @@ const UV_AboutUs: React.FC = () => {
 
   // Contact form submission (mock since endpoint doesn't exist)
   const contactFormMutation = useMutation({
-    mutationFn: async (formData: ContactFormData) => {
+    mutationFn: async (_formData: ContactFormData) => {
       // Mock submission since endpoint doesn't exist
       await new Promise(resolve => setTimeout(resolve, 1000));
       return {
@@ -104,7 +103,7 @@ const UV_AboutUs: React.FC = () => {
       });
       setContactFormErrors({});
     },
-    onError: (error) => {
+    onError: () => {
       setContactFormErrors({ submit: 'Failed to submit inquiry. Please try again.' });
     }
   });

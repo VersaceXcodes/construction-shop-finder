@@ -7,17 +7,9 @@ import {
   MagnifyingGlassIcon, 
   FolderIcon, 
   PlusIcon, 
-  TrashIcon, 
   PlayIcon,
   BellIcon,
-  ChartBarIcon,
-  TagIcon,
-  ClockIcon,
-  StarIcon,
-  ShareIcon,
-  Cog6ToothIcon,
-  FunnelIcon,
-  ArrowPathIcon
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid';
 
@@ -106,7 +98,7 @@ const UV_SavedSearches: React.FC = () => {
     }));
   };
 
-  const executeSearch = async (searchData: SavedSearch) => {
+  const executeSearch = (searchData: SavedSearch) => {
     const searchParams = new URLSearchParams();
     searchParams.set('q', searchData.query);
     
@@ -118,7 +110,7 @@ const UV_SavedSearches: React.FC = () => {
     return `/search?${searchParams.toString()}`;
   };
 
-  const createAlert = async (searchId: string) => {
+  const createAlert = async (_searchId: string) => {
     if (!authToken) throw new Error('Authentication required');
     
     await axios.post(
@@ -142,7 +134,7 @@ const UV_SavedSearches: React.FC = () => {
   });
 
   // Mutations
-  const executeSearchMutation = useMutation({
+  useMutation({
     mutationFn: executeSearch
   });
 
@@ -225,11 +217,7 @@ const UV_SavedSearches: React.FC = () => {
     );
   };
 
-  const handleSelectAll = () => {
-    setSelectedSearches(
-      selectedSearches.length === filteredSearches.length ? [] : filteredSearches.map(s => s.id)
-    );
-  };
+
 
   if (isLoading) {
     return (

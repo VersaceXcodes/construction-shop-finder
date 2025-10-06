@@ -49,14 +49,6 @@ interface SupportTicket {
   last_response_at: string | null;
 }
 
-interface ChatMessage {
-  id: string;
-  sender_type: 'user' | 'agent';
-  message: string;
-  timestamp: string;
-}
-
-
 const UV_HelpSupport: React.FC = () => {
   // Global state
   const currentUser = useAppStore(state => state.authentication_state.current_user);
@@ -433,8 +425,7 @@ const UV_HelpSupport: React.FC = () => {
     // Query will automatically refetch due to searchQuery dependency
   };
 
-  const handleContactFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleContactFormSubmit = (_e: React.FormEvent) => {
     if (!isAuthenticated) {
       alert('Please sign in to submit a support ticket');
       return;

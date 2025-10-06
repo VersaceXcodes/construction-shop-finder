@@ -6,7 +6,6 @@ import { useAppStore } from '@/store/main';
 import { 
   Camera, 
   Flashlight, 
-  
   X, 
   Search, 
   Package, 
@@ -14,7 +13,6 @@ import {
   MapPin, 
   Plus,
   Keyboard,
-  Image as ImageIcon,
   History,
   AlertCircle,
   CheckCircle,
@@ -170,11 +168,7 @@ const UV_BarcodeScanner: React.FC = () => {
     entry_method: 'keyboard'
   });
 
-  const [galleryImportState, setGalleryImportState] = useState<GalleryImportState>({
-    importing: false,
-    selected_image: null,
-    processing: false
-  });
+
 
   const [currentStream, setCurrentStream] = useState<MediaStream | null>(null);
 

@@ -76,7 +76,6 @@ const UV_TripPlanner: React.FC = () => {
   const [selectedShops, setSelectedShops] = useState<Shop[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showShopSelector, setShowShopSelector] = useState(false);
-  const [cashDistribution, setCashDistribution] = useState<{[key: string]: { cash: number; credit: number }}>({});
   const [contingencyPercentage, setContingencyPercentage] = useState(10);
   
   // URL parameters
@@ -106,7 +105,7 @@ const UV_TripPlanner: React.FC = () => {
     staleTime: 5 * 60 * 1000
   });
 
-  const { data: bomData, isLoading: bomLoading } = useQuery({
+  const { data: bomData } = useQuery({
     queryKey: ['bom-details', bomIdParam],
     queryFn: async () => {
       const response = await axios.get(
@@ -279,22 +278,22 @@ const UV_TripPlanner: React.FC = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {selectedShops.map((shop) => (
+                      {selectedShops.map((shop, shopIndex) => (
                         <div
                           key={shop.id}
                           className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
                           draggable
-                          onDragStart={(e) => e.dataTransfer.setData('text/plain', index.toString())}
+                          onDragStart={(e) => e.dataTransfer.setData('text/plain', shopIndex.toString())}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
                             const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-                            moveShop(fromIndex, index);
+                            moveShop(fromIndex, shopIndex);
                           }}
                         >
                           <div className="flex items-center space-x-4">
                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-semibold text-sm">
-                              {index + 1}
+                              {shopIndex + 1}
                             </div>
                             <div>
                               <div className="flex items-center space-x-2">

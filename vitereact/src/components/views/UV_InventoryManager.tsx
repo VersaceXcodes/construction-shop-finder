@@ -5,17 +5,14 @@ import axios from 'axios';
 import { useAppStore } from '@/store/main';
 import { 
   Search, 
-  Filter, 
   Plus, 
   Edit3, 
   Trash2, 
   Upload, 
   Download, 
-  TrendingUp, 
   AlertTriangle, 
   CheckCircle2, 
   Package, 
-  DollarSign,
   BarChart3,
   RefreshCw,
   X,
@@ -251,7 +248,7 @@ const UV_InventoryManager: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shop-inventory', shopId] });
-      setSelectedItems(prev => prev.filter(id => !prev.includes(_variant_id)));
+      setSelectedItems(prev => prev.filter(itemId => !prev.includes(itemId)));
     },
   });
 
@@ -304,7 +301,7 @@ const UV_InventoryManager: React.FC = () => {
 
   const handleUpdateStock = useCallback((variant_id: string, quantity: number, inStock: boolean) => {
     updateInventoryMutation.mutate({
-      variant_id,
+      variantId: variant_id,
       data: {
         stock_quantity: quantity,
         in_stock: inStock

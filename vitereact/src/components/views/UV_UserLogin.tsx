@@ -94,7 +94,7 @@ const UV_UserLogin: React.FC = () => {
         loading: false
       }));
     },
-    onError: (error: any) => {
+    onError: () => {
       setForgotPasswordState(prev => ({
         ...prev,
         loading: false

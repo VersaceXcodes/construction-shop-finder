@@ -10,7 +10,6 @@ import {
   ShareIcon, 
   DocumentDuplicateIcon,
   ChartBarIcon,
-  CogIcon,
   MagnifyingGlassIcon,
   BuildingStorefrontIcon,
   TruckIcon,
@@ -605,8 +604,8 @@ const UV_BOMBuilder: React.FC = () => {
                       <div>
                         <h4 className="text-sm font-medium text-gray-900 mb-2">Shop Breakdown</h4>
                         <div className="space-y-2">
-                          {costAnalysis.shop_breakdown.slice(0, 3).map((shop) => (
-                            <div key={index} className="flex items-center justify-between text-sm">
+                          {costAnalysis.shop_breakdown.slice(0, 3).map((shop, shopIndex) => (
+                            <div key={shopIndex} className="flex items-center justify-between text-sm">
                               <div>
                                 <span className="text-gray-900">{shop.shop.name}</span>
                                 <span className="text-gray-500 ml-1">

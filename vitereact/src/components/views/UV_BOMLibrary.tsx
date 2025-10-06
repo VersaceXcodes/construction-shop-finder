@@ -6,20 +6,14 @@ import axios from 'axios';
 import { 
   PlusIcon, 
   MagnifyingGlassIcon, 
-  FunnelIcon,
   Squares2X2Icon,
   ListBulletIcon,
   EllipsisVerticalIcon,
   DocumentDuplicateIcon,
   TrashIcon,
-  ChartBarIcon,
-  CalendarIcon,
-  CurrencyDollarIcon,
   BuildingOffice2Icon,
   TagIcon,
-  EyeIcon,
   PencilIcon,
-  ShareIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
@@ -73,7 +67,6 @@ const UV_BOMLibrary: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showTemplates, setShowTemplates] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
-  const [selectedBoms, setSelectedBoms] = useState<string[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -280,13 +273,7 @@ const UV_BOMLibrary: React.FC = () => {
     }
   };
 
-  const toggleBomSelection = (bomId: string) => {
-    setSelectedBoms(prev => 
-      prev.includes(bomId) 
-        ? prev.filter(id => id !== bomId)
-        : [...prev, bomId]
-    );
-  };
+
 
   const boms = bomsData?.boms || [];
   const totalBoms = bomsData?.total || 0;

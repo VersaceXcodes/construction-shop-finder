@@ -66,12 +66,7 @@ const UV_UserRegistration: React.FC = () => {
     location_error: ''
   });
 
-  const [verificationStatus, setVerificationStatus] = useState({
-    email_sent: false,
-    phone_sent: false,
-    email_verified: false,
-    phone_verified: false
-  });
+
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -89,7 +84,8 @@ const UV_UserRegistration: React.FC = () => {
   // Form validation using Zod
   const validateFormField = (field: string, value: any) => {
     try {
-      const fieldSchema = registrationSchema.pick({ [field]: true });
+      const fieldObj: Record<string, true> = { [field]: true };
+      const fieldSchema = registrationSchema.pick(fieldObj as any);
       fieldSchema.parse({ [field]: value });
       
       setFormValidationErrors(prev => ({
@@ -229,11 +225,11 @@ const UV_UserRegistration: React.FC = () => {
   const canProceedFromStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        return accountTypeSelection.selected_type !== '';
+        return accountTypeSelection.selected_type === 'buyer' || accountTypeSelection.selected_type === 'seller';
       case 2:
-        return registrationForm.email && 
-               registrationForm.password && 
-               registrationForm.name &&
+        return !!registrationForm.email && 
+               !!registrationForm.password && 
+               !!registrationForm.name &&
                !formValidationErrors.email &&
                !formValidationErrors.password &&
                !formValidationErrors.name;

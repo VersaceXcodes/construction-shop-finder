@@ -256,9 +256,9 @@ const UV_ProductDetails: React.FC = () => {
 
   // Image gallery handling
   const allImages = [
-    "" ?? "",
-    "" ?? "",
-    ...(sortedPrices.slice(0, 3).map(p => "" ?? "").filter(Boolean) || [])
+    "",
+    "",
+    ...(sortedPrices.slice(0, 3).map(() => "").filter(Boolean) || [])
   ].filter(Boolean) as string[];
 
   const nextImage = () => {

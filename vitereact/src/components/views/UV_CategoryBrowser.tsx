@@ -86,10 +86,6 @@ const UV_CategoryBrowser: React.FC = () => {
     (searchParams.get('view') as 'grid' | 'list') || 'grid'
   );
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'name');
-  const [priceRange, setPriceRange] = useState<{ min: number | null; max: number | null }>({ 
-    min: null, 
-    max: null 
-  });
   const [showFilters, setShowFilters] = useState(false);
 
   // API Base URL
@@ -204,7 +200,7 @@ const UV_CategoryBrowser: React.FC = () => {
       return breadcrumbs;
     };
 
-    return buildBreadcrumbs(currentCategory, categoryHierarchy.hierarchy);
+    return buildBreadcrumbs(currentCategory || undefined, categoryHierarchy.hierarchy);
   }, [currentCategory, categoryHierarchy]);
 
   // Handle category path changes from URL

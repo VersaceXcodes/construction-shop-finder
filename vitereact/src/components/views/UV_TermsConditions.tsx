@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
 import { Download, Calendar, Check, Clock, FileText, Shield, Cookie, Users, Scale } from 'lucide-react';
@@ -506,10 +506,10 @@ Your consent is required for non-essential cookies. You can withdraw consent at 
   const handleConsentAcceptance = (type: 'terms' | 'privacy' | 'marketing', accepted: boolean) => {
     if (!isAuthenticated) return;
 
-    const updateData: Partial<ConsentData> = {};
-    updateData[`${type}_accepted` as keyof ConsentData] = accepted;
+    const updateData: Record<string, boolean> = {};
+    updateData[`${type}_accepted`] = accepted;
     
-    updateConsentMutation.mutate(updateData);
+    updateConsentMutation.mutate(updateData as Partial<ConsentData>);
   };
 
   const handleCookiePreference = (categoryId: string, enabled: boolean) => {

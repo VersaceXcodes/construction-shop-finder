@@ -55,7 +55,7 @@ const UV_UserProfile: React.FC = () => {
   }, [searchParams, activeTab]);
 
   // Load user profile data
-  const { data: userData, isLoading: userLoading, error: userError } = useQuery({
+  const { data: userData, isLoading: userLoading } = useQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
       const response = await axios.get(

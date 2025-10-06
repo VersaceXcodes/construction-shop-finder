@@ -11,13 +11,11 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
-  AdjustmentsHorizontalIcon,
   CurrencyDollarIcon,
   TruckIcon,
   ScaleIcon
 } from '@heroicons/react/24/outline';
 import { 
-  PinIcon as PinIconSolid,
   ChartBarIcon as ChartBarIconSolid 
 } from '@heroicons/react/24/solid';
 

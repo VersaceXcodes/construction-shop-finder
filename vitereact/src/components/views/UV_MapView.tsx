@@ -103,16 +103,6 @@ const planOptimalRoute = async (params: {
 };
 
 // Utility functions
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const R = 6371; // Radius of the Earth in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-};
 
 const UV_MapView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -593,8 +583,8 @@ const UV_MapView: React.FC = () => {
 
               {/* Shop markers */}
               {mapZoomLevel >= 13 
-                ? filteredShops.map((shop) => renderShopMarker(shop, index))
-                : mapData?.clusters?.map((cluster) => renderClusterMarker(cluster, index))
+                ? filteredShops.map((shop, shopIndex) => renderShopMarker(shop, shopIndex))
+                : mapData?.clusters?.map((cluster, clusterIndex) => renderClusterMarker(cluster, clusterIndex))
               }
             </div>
           </div>
@@ -647,8 +637,8 @@ const UV_MapView: React.FC = () => {
                     {shopDetails.phones && shopDetails.phones.length > 0 && (
                       <div>
                         <h4 className="text-sm font-medium text-gray-900 mb-1">Phone</h4>
-                        {shopDetails.phones.map((phone) => (
-                          <p key={index} className="text-sm text-gray-600">{phone}</p>
+                        {shopDetails.phones.map((phone, phoneIndex) => (
+                          <p key={phoneIndex} className="text-sm text-gray-600">{phone}</p>
                         ))}
                       </div>
                     )}

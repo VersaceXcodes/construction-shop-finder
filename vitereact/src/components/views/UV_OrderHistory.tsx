@@ -197,28 +197,7 @@ const UV_OrderHistory: React.FC = () => {
   // Calculate pagination
   // const totalPages = ordersData ? Math.ceil(ordersData.total / itemsPerPage) : 0;
 
-  // Status color mapping
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'processing': return 'bg-purple-100 text-purple-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
-  // Payment status color mapping
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      case 'refunded': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   // Format date
   const formatDate = (timestamp: number) => {
@@ -246,17 +225,6 @@ const UV_OrderHistory: React.FC = () => {
       order_id: orderId,
       auth_token: authToken
     });
-  };
-
-  // Handle order selection for bulk actions
-  const toggleOrderSelection = (orderId: string) => {
-    const newSelection = new Set(selectedOrders);
-    if (newSelection.has(orderId)) {
-      newSelection.delete(orderId);
-    } else {
-      newSelection.add(orderId);
-    }
-    setSelectedOrders(newSelection);
   };
 
   // Handle select all orders

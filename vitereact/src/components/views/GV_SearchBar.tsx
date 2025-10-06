@@ -6,18 +6,6 @@ import { useAppStore } from '@/store/main';
 import { Search, Mic, Camera, Clock, X, ArrowRight, Star, MapPin } from 'lucide-react';
 
 // TypeScript interfaces
-interface SearchSuggestion {
-  text: string;
-  type: 'product' | 'shop' | 'category';
-  id: string | null;
-  category: string | null;
-  metadata?: {
-    image_url?: string;
-    rating?: number;
-    location?: string;
-    verified?: boolean;
-  };
-}
 
 const GV_SearchBar: React.FC = () => {
   // Global state access

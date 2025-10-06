@@ -246,7 +246,6 @@ const UV_SearchResults: React.FC = () => {
         quantity,
         unit: 'piece', // Default unit
         waste_factor: 0,
-        notes: null,
       });
       
       // Reset quantity after adding

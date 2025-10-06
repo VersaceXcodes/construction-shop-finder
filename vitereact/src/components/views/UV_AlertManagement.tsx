@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppStore } from '@/store/main';
@@ -188,7 +187,7 @@ const UV_AlertManagement: React.FC = () => {
   });
 
   // Product search mutation
-  const { mutate: searchProductsMutation, isLoading: searchLoading } = useMutation({
+  const { mutate: searchProductsMutation } = useMutation({
     mutationFn: searchProducts,
     onSuccess: (data) => {
       setProductSearchResults(data.variants);

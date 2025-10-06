@@ -842,13 +842,13 @@ export const useAppStore = create<AppStore>()(
       },
 
       mark_notifications_read: (type?: string) => {
-        set((_state) => {
+        set((state) => {
           if (type) {
             return {
               notification_state: {
-                ...state.notificationstate,
+                ...state.notification_state,
                 [type]: 0,
-                unread_count: Math.max(0, state.notificationstate.unread_count - state.notificationstate[type as keyof NotificationState] as number),
+                unread_count: Math.max(0, state.notification_state.unread_count - (state.notification_state[type as keyof NotificationState] as number || 0)),
               },
             };
           } else {
@@ -965,7 +965,7 @@ export const useAppStore = create<AppStore>()(
         }));
       },
 
-      handle_price_alert: (alertData: any) => {
+      handle_price_alert: (_alertData: any) => {
         // Update notification count for price alerts
         set((state) => ({
           notification_state: {
@@ -976,12 +976,12 @@ export const useAppStore = create<AppStore>()(
         }));
       },
 
-      handle_stock_update: (stockData: any) => {
+      handle_stock_update: (_stockData: any) => {
         // Handle stock status changes - could trigger notifications or update comparison data
-        console.log('Stock update received:', stockData);
+        console.log('Stock update received:', _stockData);
       },
 
-      handle_rfq_message: (messageData: any) => {
+      handle_rfq_message: (_messageData: any) => {
         // Update notification count for RFQ messages
         set((state) => ({
           notification_state: {

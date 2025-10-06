@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/store/main';
 import axios from 'axios';
 import { 
@@ -15,7 +15,6 @@ import {
   Moon,
   Sun,
   Monitor,
-  Globe,
   Smartphone,
   Mail,
   MessageSquare,
