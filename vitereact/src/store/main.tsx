@@ -476,7 +476,7 @@ export const useAppStore = create<AppStore>()(
 
           // Connect WebSocket after successful token verification
           get().connect_websocket();
-        } catch (error) {
+        } catch {
           // Token is invalid, clear auth state
           set(() => ({
             authentication_state: {

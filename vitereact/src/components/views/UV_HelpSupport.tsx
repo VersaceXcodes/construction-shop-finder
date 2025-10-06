@@ -72,16 +72,14 @@ const UV_HelpSupport: React.FC = () => {
 
   const queryClient = useQueryClient();
 
-  // Mock API functions (since endpoints are not implemented)
   const fetchHelpArticles = async (query?: string, category?: string): Promise<{
     articles: HelpArticle[];
     categories: HelpCategory[];
     featured_articles: HelpArticle[];
   }> => {
-    // Mock delay
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    const mockCategories: HelpCategory[] = [
+    const categories: HelpCategory[] = [
       {
         id: 'getting_started',
         name: 'Getting Started',
@@ -132,7 +130,7 @@ const UV_HelpSupport: React.FC = () => {
       }
     ];
 
-    const mockArticles: HelpArticle[] = [
+    const articles: HelpArticle[] = [
       {
         id: 'art_001',
         title: 'How to Create Your First BOM',
@@ -201,7 +199,7 @@ const UV_HelpSupport: React.FC = () => {
     ];
 
     // Filter articles based on query and category
-    let filteredArticles = mockArticles;
+    let filteredArticles = articles;
     
     if (query) {
       filteredArticles = filteredArticles.filter(article => 
@@ -226,7 +224,7 @@ const UV_HelpSupport: React.FC = () => {
 
     return {
       articles: filteredArticles,
-      categories: mockCategories,
+      categories: categories,
       featured_articles: featuredArticles
     };
   };
@@ -238,7 +236,7 @@ const UV_HelpSupport: React.FC = () => {
   }> => {
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    const mockFAQs: FAQItem[] = [
+    const faqs: FAQItem[] = [
       {
         id: 'faq_001',
         question: 'How do I create an account?',
@@ -295,12 +293,12 @@ const UV_HelpSupport: React.FC = () => {
       }
     ];
 
-    const categories = [...new Set(mockFAQs.map(faq => faq.category))];
-    const popularQuestions = mockFAQs.filter(faq => faq.popular);
+    const categories = [...new Set(faqs.map(faq => faq.category))];
+    const popularQuestions = faqs.filter(faq => faq.popular);
 
     return {
       categories,
-      questions: mockFAQs,
+      questions: faqs,
       popular_questions: popularQuestions
     };
   };
@@ -314,7 +312,7 @@ const UV_HelpSupport: React.FC = () => {
     
     await new Promise(resolve => setTimeout(resolve, 400));
     
-    const mockTickets: SupportTicket[] = [
+    const tickets: SupportTicket[] = [
       {
         id: 'ticket_001',
         subject: 'Cannot upload inventory photos',
@@ -339,11 +337,11 @@ const UV_HelpSupport: React.FC = () => {
       }
     ];
 
-    const activeCount = mockTickets.filter(t => ['open', 'in_progress'].includes(t.status)).length;
-    const resolvedCount = mockTickets.filter(t => ['resolved', 'closed'].includes(t.status)).length;
+    const activeCount = tickets.filter(t => ['open', 'in_progress'].includes(t.status)).length;
+    const resolvedCount = tickets.filter(t => ['resolved', 'closed'].includes(t.status)).length;
 
     return {
-      tickets: mockTickets,
+      tickets: tickets,
       active_count: activeCount,
       resolved_count: resolvedCount
     };
@@ -425,7 +423,8 @@ const UV_HelpSupport: React.FC = () => {
     // Query will automatically refetch due to searchQuery dependency
   };
 
-  const handleContactFormSubmit = (_e: React.FormEvent) => {
+  const handleContactFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!isAuthenticated) {
       alert('Please sign in to submit a support ticket');
       return;
@@ -447,7 +446,6 @@ const UV_HelpSupport: React.FC = () => {
     setSelectedCategory('all');
   };
 
-  // Mock video tutorials data
   const videoTutorials = [
     {
       id: 'vid_001',

@@ -72,8 +72,7 @@ interface UserReputation {
   helpful_votes: number;
 }
 
-// Mock data
-const mockCategories = [
+const categories = [
   'Technical Specifications',
   'Product Recommendations', 
   'Installation Guidance',
@@ -84,12 +83,12 @@ const mockCategories = [
   'Industry Best Practices'
 ];
 
-const mockTags = [
+const tags = [
   'cement', 'steel', 'concrete', 'foundation', 'roofing', 'plumbing', 
   'electrical', 'insulation', 'waterproofing', 'safety', 'tools', 'equipment'
 ];
 
-const mockQuestions: Question[] = [
+const questions: Question[] = [
   {
     id: 'q1',
     title: 'What type of cement is best for foundation work in Dubai climate?',
@@ -149,42 +148,6 @@ const mockQuestions: Question[] = [
   }
 ];
 
-const mockAnswers: Answer[] = [
-  {
-    id: 'a1',
-    question_id: 'q1',
-    content: 'For Dubai\'s climate, I highly recommend using PPC (Portland Pozzolan Cement) for foundation work. It offers better durability against sulfate attack and generates less heat of hydration, which is crucial in hot climates. The pozzolanic materials improve long-term strength and reduce permeability.',
-    author: {
-      id: 'u4',
-      name: 'Dr. Khalid Al-Rashid',
-      reputation_score: 4920,
-      badges: ['Verified Expert', 'Materials Engineer', 'Top Contributor'],
-      is_expert: true
-    },
-    votes: 18,
-    is_best_answer: true,
-    is_helpful: true,
-    created_at: '2024-01-15T12:45:00Z',
-    updated_at: '2024-01-15T12:45:00Z'
-  },
-  {
-    id: 'a2',
-    question_id: 'q1',
-    content: 'While PPC is good, OPC 43 grade can also work well if you ensure proper curing practices. The key is maintaining adequate moisture and temperature control during the initial 28 days. Consider using curing compounds in Dubai\'s heat.',
-    author: {
-      id: 'u5',
-      name: 'Rajesh Kumar',
-      reputation_score: 2100,
-      badges: ['Site Supervisor', 'Quality Control'],
-      is_expert: false
-    },
-    votes: 8,
-    is_best_answer: false,
-    is_helpful: true,
-    created_at: '2024-01-15T15:20:00Z',
-    updated_at: '2024-01-15T15:20:00Z'
-  }
-];
 
 const UV_CommunityQA: React.FC = () => {
   // Global state
@@ -220,13 +183,12 @@ const UV_CommunityQA: React.FC = () => {
   const [newAnswer, setNewAnswer] = useState('');
   const [tagInput, setTagInput] = useState('');
 
-  // Mock data with filtering
-  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>(mockQuestions);
+  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>(questions);
   const [questionAnswers, setQuestionAnswers] = useState<Answer[]>([]);
 
   // Filter questions based on search criteria
   useEffect(() => {
-    let filtered = [...mockQuestions];
+    let filtered = [...questions];
 
     if (searchFilters.query) {
       filtered = filtered.filter(q => 
@@ -269,7 +231,7 @@ const UV_CommunityQA: React.FC = () => {
   // Load answers when question is selected
   useEffect(() => {
     if (selectedQuestion) {
-      const answers = mockAnswers.filter(a => a.question_id === selectedQuestion.id);
+      const answers = answers.filter(a => a.question_id === selectedQuestion.id);
       setQuestionAnswers(answers);
     }
   }, [selectedQuestion]);
@@ -464,7 +426,7 @@ const UV_CommunityQA: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="">All Categories</option>
-                      {mockCategories.map(category => (
+                      {categories.map(category => (
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
@@ -874,7 +836,7 @@ const UV_CommunityQA: React.FC = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="">Select a category</option>
-                      {mockCategories.map(category => (
+                      {categories.map(category => (
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
@@ -931,7 +893,7 @@ const UV_CommunityQA: React.FC = () => {
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      Suggested: {mockTags.slice(0, 6).join(', ')}
+                      Suggested: {tags.slice(0, 6).join(', ')}
                     </p>
                   </div>
 

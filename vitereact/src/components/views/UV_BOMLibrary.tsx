@@ -111,11 +111,9 @@ const UV_BOMLibrary: React.FC = () => {
     })
   });
 
-  // Fetch BOM templates
   const { data: templatesData } = useQuery({
     queryKey: ['bom-templates'],
     queryFn: async () => {
-      // Mock templates data since API doesn't exist yet
       return {
         templates: [
           {

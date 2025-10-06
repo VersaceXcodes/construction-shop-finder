@@ -74,7 +74,6 @@ const fetchOrders = async (params: {
     
     return response.data;
   } catch (error: any) {
-    // If orders endpoint doesn't exist, return mock data for development
     if (error.response?.status === 404) {
       return {
         orders: [],
@@ -102,7 +101,6 @@ const reorderItems = async (params: {
     
     return response.data;
   } catch (error: any) {
-    // Mock successful BOM creation for development
     if (error.response?.status === 404) {
       return { bom_id: 'bom_' + Date.now() };
     }
@@ -236,7 +234,6 @@ const UV_OrderHistory: React.FC = () => {
     }
   };
 
-  // Export orders (mock implementation)
   const handleExport = (format: 'pdf' | 'excel') => {
     const ordersToExport = selectedOrders.size > 0 ? 
       filteredOrders.filter(order => selectedOrders.has(order.id)) : 

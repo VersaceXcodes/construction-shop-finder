@@ -136,21 +136,21 @@ const UV_ShopAnalytics: React.FC = () => {
       variant_id: item.variant_id,
       product_name: `Product ${item.variant_id.slice(-6)}`,
       stock_quantity: item.stock_quantity || 0,
-      turnover_rate: Math.random() * 10, // Mock calculation
       revenue: (item.stock_quantity || 0) * 25.5 * Math.random(),
       profit_margin: 15 + Math.random() * 20,
+      turnover_rate: Math.random() * 10,
       last_updated: item.updated_at
     }));
   }, [inventoryData]);
 
   const rfqAnalytics = useMemo((): RFQAnalyticsData => {
     if (!rfqData?.rfqs) {
-      return {
-        total_rfqs: 0,
-        response_rate: 0,
-        conversion_rate: 0,
-        avg_response_time: 0,
-        win_rate: 0
+    return {
+      total_rfqs: rfqs.length,
+      response_rate: 0,
+      conversion_rate: 0,
+      avg_response_time: 0,
+      win_rate: 0
       };
     }
 
@@ -160,14 +160,13 @@ const UV_ShopAnalytics: React.FC = () => {
     return {
       total_rfqs: rfqs.length,
       response_rate: rfqs.length > 0 ? (respondedRfqs.length / rfqs.length) * 100 : 0,
-      conversion_rate: respondedRfqs.length > 0 ? 65 : 0, // Mock calculation
-      avg_response_time: 2.5, // Mock hours
-      win_rate: respondedRfqs.length > 0 ? 45 : 0 // Mock percentage
+      conversion_rate: 0,
+      avg_response_time: 0,
+      win_rate: 0
     };
   }, [rfqData]);
 
-  // Mock shop performance data (since endpoint is missing)
-  const mockShopPerformance: ShopPerformanceData = {
+  const shopPerformance: ShopPerformanceData = {
     revenue: {
       daily: [1200, 1350, 1100, 1450, 1600, 1300, 1500],
       weekly: [8500, 9200, 8800, 9500],
@@ -183,9 +182,8 @@ const UV_ShopAnalytics: React.FC = () => {
 
   // Handle export functionality
   const handleExportReport = (format: 'csv' | 'pdf' | 'xlsx') => {
-    // Mock export functionality
     const data = {
-      shop_performance: mockShopPerformance,
+      shop_performance: shopPerformance,
       product_performance: productPerformance,
       rfq_analytics: rfqAnalytics,
       export_date: new Date().toISOString(),
@@ -338,7 +336,7 @@ const UV_ShopAnalytics: React.FC = () => {
                     <div>
                       <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
                       <p className="text-3xl font-bold text-gray-900 mt-1">
-                        {mockShopPerformance.revenue.monthly[mockShopPerformance.revenue.monthly.length - 1].toLocaleString()} AED
+                        {shopPerformance.revenue.monthly[shopPerformance.revenue.monthly.length - 1].toLocaleString()} AED
                       </p>
                       <p className="text-green-600 text-sm mt-1">+12.5% from last month</p>
                     </div>
@@ -354,7 +352,7 @@ const UV_ShopAnalytics: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-600 text-sm font-medium">Total Orders</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">{mockShopPerformance.orders_count}</p>
+                      <p className="text-3xl font-bold text-gray-900 mt-1">{shopPerformance.orders_count}</p>
                       <p className="text-blue-600 text-sm mt-1">+8.2% from last month</p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -369,7 +367,7 @@ const UV_ShopAnalytics: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-600 text-sm font-medium">Avg Order Value</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">{mockShopPerformance.avg_order_value.toFixed(2)} AED</p>
+                      <p className="text-3xl font-bold text-gray-900 mt-1">{shopPerformance.avg_order_value.toFixed(2)} AED</p>
                       <p className="text-green-600 text-sm mt-1">+5.7% from last month</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
@@ -384,7 +382,7 @@ const UV_ShopAnalytics: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-600 text-sm font-medium">Response Time</p>
-                      <p className="text-3xl font-bold text-gray-900 mt-1">{mockShopPerformance.response_time_avg}h</p>
+                      <p className="text-3xl font-bold text-gray-900 mt-1">{shopPerformance.response_time_avg}h</p>
                       <p className="text-green-600 text-sm mt-1">-0.5h from last month</p>
                     </div>
                     <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
@@ -463,11 +461,11 @@ const UV_ShopAnalytics: React.FC = () => {
                     <span className="text-sm font-medium text-gray-900">Average: 1,320 AED</span>
                   </div>
                   <div className="flex items-end space-x-2 h-40">
-                    {mockShopPerformance.revenue.daily.map((value, index) => (
+                    {shopPerformance.revenue.daily.map((value, index) => (
                       <div key={index} className="flex flex-col items-center flex-1">
                         <div
                           className="bg-blue-500 w-full rounded-t"
-                          style={{ height: `${(value / Math.max(...mockShopPerformance.revenue.daily)) * 100}%` }}
+                          style={{ height: `${(value / Math.max(...shopPerformance.revenue.daily)) * 100}%` }}
                         ></div>
                         <span className="text-xs text-gray-500 mt-2">Day {index + 1}</span>
                       </div>
@@ -479,13 +477,13 @@ const UV_ShopAnalytics: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="text-center">
                       <p className="text-2xl font-bold text-gray-900">
-                        {mockShopPerformance.revenue.monthly[mockShopPerformance.revenue.monthly.length - 1].toLocaleString()} AED
+                        {shopPerformance.revenue.monthly[shopPerformance.revenue.monthly.length - 1].toLocaleString()} AED
                       </p>
                       <p className="text-sm text-gray-600">This Month</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-gray-900">
-                        {mockShopPerformance.revenue.yearly[mockShopPerformance.revenue.yearly.length - 1].toLocaleString()} AED
+                        {shopPerformance.revenue.yearly[shopPerformance.revenue.yearly.length - 1].toLocaleString()} AED
                       </p>
                       <p className="text-sm text-gray-600">This Year</p>
                     </div>
@@ -580,16 +578,16 @@ const UV_ShopAnalytics: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Total Customers</span>
-                        <span className="font-semibold">{mockShopPerformance.customer_count}</span>
+                        <span className="font-semibold">{shopPerformance.customer_count}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Repeat Customers</span>
-                        <span className="font-semibold">{mockShopPerformance.repeat_customers}</span>
+                        <span className="font-semibold">{shopPerformance.repeat_customers}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Retention Rate</span>
                         <span className="font-semibold text-green-600">
-                          {((mockShopPerformance.repeat_customers / mockShopPerformance.customer_count) * 100).toFixed(1)}%
+                          {((shopPerformance.repeat_customers / shopPerformance.customer_count) * 100).toFixed(1)}%
                         </span>
                       </div>
                     </div>

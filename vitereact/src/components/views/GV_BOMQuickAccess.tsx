@@ -83,16 +83,11 @@ const GV_BOMQuickAccess: React.FC = () => {
 
   const queryClient = useQueryClient();
 
-  // Only show widget if user is authenticated and not on certain views
-  if (!isAuthenticated || !currentBOM) {
-    return null;
-  }
-
   // BOM cost analysis query
   const { data: costAnalysis, isLoading: isLoadingCosts } = useQuery<BOMCostAnalysis>({
-    queryKey: ['bom-cost-analysis', currentBOM.id],
+    queryKey: ['bom-cost-analysis', currentBOM?.id],
     queryFn: async () => {
-      if (!currentBOM.id || !authToken) return null;
+      if (!currentBOM?.id || !authToken) return null;
       
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/boms/${currentBOM.id}/cost-analysis`,
@@ -103,17 +98,15 @@ const GV_BOMQuickAccess: React.FC = () => {
       );
       return response.data;
     },
-    enabled: !!currentBOM.id && !!authToken,
-    staleTime: 30000, // 30 seconds
+    enabled: !!currentBOM?.id && !!authToken,
+    staleTime: 30000,
     refetchOnWindowFocus: false,
   });
-
-
 
   // Remove last item mutation
   const removeLastItemMutation = useMutation<BOMUpdateResponse, Error>({
     mutationFn: async () => {
-      if (!currentBOM.id || !authToken || currentBOM.items.length === 0) {
+      if (!currentBOM?.id || !authToken || !currentBOM?.items || currentBOM.items.length === 0) {
         throw new Error('No items to remove');
       }
 
@@ -126,7 +119,8 @@ const GV_BOMQuickAccess: React.FC = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      // Update global state
+      if (!currentBOM) return;
+      
       const updatedItems = currentBOM.items.slice(0, -1);
       
       useAppStore.setState(state => ({
@@ -139,7 +133,6 @@ const GV_BOMQuickAccess: React.FC = () => {
         }
       }));
       
-      // Invalidate cost analysis
       queryClient.invalidateQueries({ queryKey: ['bom-cost-analysis'] });
     },
   });
@@ -157,9 +150,14 @@ const GV_BOMQuickAccess: React.FC = () => {
     },
   });
 
+  // Only show widget if user is authenticated and not on certain views
+  if (!isAuthenticated || !currentBOM) {
+    return null;
+  }
+
   // Handle remove last item
   const handleRemoveLastItem = () => {
-    if (currentBOM.items.length > 0) {
+    if (currentBOM?.items && currentBOM.items.length > 0) {
       removeLastItemMutation.mutate();
     }
   };

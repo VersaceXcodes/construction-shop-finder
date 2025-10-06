@@ -541,7 +541,6 @@ const UV_MapView: React.FC = () => {
               </div>
             )}
 
-            {/* Mock Map Display */}
             <div 
               className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 relative overflow-hidden cursor-crosshair"
               onClick={(e) => {

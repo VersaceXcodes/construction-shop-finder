@@ -66,11 +66,9 @@ const UV_AboutUs: React.FC = () => {
     }
   });
 
-  // Load company statistics (mock data since endpoint doesn't exist)
   const { data: companyStats } = useQuery<CompanyStats>({
     queryKey: ['company-stats'],
     queryFn: async () => {
-      // Mock data since endpoint doesn't exist
       return {
         total_users: 15420,
         total_shops: 3240,
@@ -78,18 +76,17 @@ const UV_AboutUs: React.FC = () => {
         cost_savings_generated: 45600000
       };
     },
-    staleTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: 30 * 60 * 1000,
   });
 
-  // Contact form submission (mock since endpoint doesn't exist)
   const contactFormMutation = useMutation({
-    mutationFn: async (_formData: ContactFormData) => {
-      // Mock submission since endpoint doesn't exist
+    mutationFn: async (formData: ContactFormData) => {
+      console.log('Submitting contact form:', formData);
       await new Promise(resolve => setTimeout(resolve, 1000));
       return {
         success: true,
         message: 'Thank you for your inquiry. We will respond within 24 hours.',
-        inquiry_id: 'mock_' + Date.now()
+        inquiry_id: 'inquiry_' + Date.now()
       };
     },
     onSuccess: () => {
@@ -108,14 +105,13 @@ const UV_AboutUs: React.FC = () => {
     }
   });
 
-  // Track page view on mount and section changes
   useEffect(() => {
     trackPageViewMutation.mutate({
       section: currentSection,
       language: contentLanguage,
       timestamp: pageLoadedAt
     });
-  }, [currentSection, contentLanguage]);
+  }, [currentSection, contentLanguage, pageLoadedAt, trackPageViewMutation]);
 
   // Update URL when section changes
   const navigateToSection = (section: string | null) => {

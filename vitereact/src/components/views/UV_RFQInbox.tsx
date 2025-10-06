@@ -158,8 +158,6 @@ const UV_RFQInbox: React.FC = () => {
       } else if (currentUser.user_type === 'seller') {
         // For shop owners, show RFQs in their delivery area
         // This would require shop profile data with location/delivery radius
-        // For now, showing all RFQs they have access to
-        filteredRFQs = filteredRFQs;
       }
 
       return { rfqs: filteredRFQs, total: filteredRFQs.length };
@@ -330,7 +328,7 @@ const UV_RFQInbox: React.FC = () => {
         }))
       }));
     }
-  }, [quoteData.line_items.map(item => `${item.unit_price}-${item.quantity}`).join(','), quoteData.delivery_fee]);
+  }, [quoteData.line_items, quoteData.delivery_fee]);
 
   // Auto-scroll messages to bottom
   useEffect(() => {

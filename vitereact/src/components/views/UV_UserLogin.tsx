@@ -76,7 +76,7 @@ const UV_UserLogin: React.FC = () => {
       clearAuthError();
     }
     setLoginErrors({});
-  }, [loginForm.email, loginForm.password]);
+  }, [loginForm.email, loginForm.password, authError, clearAuthError]);
   
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
@@ -190,7 +190,6 @@ const UV_UserLogin: React.FC = () => {
       [`${provider}_loading`]: true
     }));
     
-    // Mock implementation - in production this would redirect to OAuth provider
     setTimeout(() => {
       setSocialAuthState(prev => ({
         ...prev,

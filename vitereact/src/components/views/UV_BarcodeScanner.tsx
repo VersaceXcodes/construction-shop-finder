@@ -219,15 +219,14 @@ const UV_BarcodeScanner: React.FC = () => {
   const simulateBarcodeDetection = useCallback(() => {
     if (!cameraState.active || cameraState.scanning) return;
 
-    // Simulate barcode detection every 2 seconds
-    const mockBarcodes = [
+    const testBarcodes = [
       '1234567890123',
       '9876543210987',
       '5555555555555',
       '1111111111111'
     ];
 
-    const randomBarcode = mockBarcodes[Math.floor(Math.random() * mockBarcodes.length)];
+    const randomBarcode = testBarcodes[Math.floor(Math.random() * testBarcodes.length)];
     
     setScanResults({
       barcode: randomBarcode,

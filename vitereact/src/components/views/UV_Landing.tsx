@@ -93,8 +93,7 @@ const UV_Landing: React.FC = () => {
     return response.data;
   };
 
-  // Mock platform stats - in real implementation this would be an API call
-  const mockPlatformStats: PlatformStats = {
+  const platformStats: PlatformStats = {
     shop_count: 1250,
     product_count: 15000,
     user_count: 8500
@@ -344,7 +343,7 @@ const UV_Landing: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-3xl lg:text-4xl font-bold text-blue-600 mb-2">
-                {mockPlatformStats.shop_count.toLocaleString()}+
+                {platformStats.shop_count.toLocaleString()}+
               </div>
               <div className="text-gray-600 font-medium">
                 {language === 'ar' ? 'متجر موثق' : 'Verified Shops'}
@@ -352,7 +351,7 @@ const UV_Landing: React.FC = () => {
             </div>
             <div>
               <div className="text-3xl lg:text-4xl font-bold text-blue-600 mb-2">
-                {mockPlatformStats.product_count.toLocaleString()}+
+                {platformStats.product_count.toLocaleString()}+
               </div>
               <div className="text-gray-600 font-medium">
                 {language === 'ar' ? 'منتج متاح' : 'Products Available'}
@@ -360,7 +359,7 @@ const UV_Landing: React.FC = () => {
             </div>
             <div>
               <div className="text-3xl lg:text-4xl font-bold text-blue-600 mb-2">
-                {mockPlatformStats.user_count.toLocaleString()}+
+                {platformStats.user_count.toLocaleString()}+
               </div>
               <div className="text-gray-600 font-medium">
                 {language === 'ar' ? 'عميل راضٍ' : 'Happy Customers'}

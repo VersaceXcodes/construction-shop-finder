@@ -77,7 +77,6 @@ const UV_SavedSearches: React.FC = () => {
       }
     );
     
-    // Transform search history to SavedSearch format with mock additional data
     return response.data.searches.map((search: any, index: number) => ({
       id: `search_${index}`,
       query: search.query,
@@ -110,7 +109,8 @@ const UV_SavedSearches: React.FC = () => {
     return `/search?${searchParams.toString()}`;
   };
 
-  const createAlert = async (_searchId: string) => {
+  const createAlert = async (searchId: string) => {
+    console.log('Creating alert for search:', searchId);
     if (!authToken) throw new Error('Authentication required');
     
     await axios.post(

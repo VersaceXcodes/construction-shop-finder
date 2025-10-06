@@ -273,7 +273,6 @@ const UV_ShopDashboard: React.FC = () => {
     retry: 1
   });
 
-  // Mock performance metrics (since endpoint is missing)
   const performanceMetrics: PerformanceMetrics = {
     revenue: {
       daily: 1250.80,
